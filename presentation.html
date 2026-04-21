@@ -31,10 +31,10 @@
   @keyframes bob { 0%,100% { transform:translate(-50%, 0); } 50% { transform:translate(-50%, 5px); } }
 
   /* brand + theme toggle */
-  .brand { position:fixed; top:22px; left:26px; z-index:100; display:flex; align-items:center; gap:10px;
-    padding:6px 10px; border-radius:8px; background:rgba(255,255,255,0.04); backdrop-filter:blur(6px); }
-  .brand img { height:36px; width:auto; display:block; filter:brightness(8) saturate(0); }
-  .brand span { font-size:0.78rem; letter-spacing:0.08em; color:var(--fg-dim); }
+  .brand { position:fixed; bottom:16px; right:24px; z-index:100; display:flex; align-items:center; gap:10px;
+    padding:6px 12px; border-radius:8px; background:rgba(255,255,255,0.04); backdrop-filter:blur(6px); }
+  .brand img { height:28px; width:auto; display:block; filter:brightness(8) saturate(0); }
+  .brand span { font-size:0.72rem; letter-spacing:0.08em; color:var(--fg-dim); }
   .theme-toggle { position:fixed; top:22px; right:26px; z-index:100; width:40px; height:40px;
     border-radius:50%; border:1px solid rgba(255,255,255,0.2); background:rgba(255,255,255,0.04);
     color:var(--fg); cursor:pointer; display:flex; align-items:center; justify-content:center; transition:background 200ms; }
@@ -48,7 +48,7 @@
   .ctrl.prev { left:0; } .ctrl.next { right:0; }
   .ctrl svg { width:44px; height:44px; stroke:currentColor; fill:none; stroke-width:2; }
 
-  .indicator { position:fixed; bottom:20px; right:28px; z-index:100; font-size:0.88rem;
+  .indicator { position:fixed; bottom:20px; left:28px; z-index:100; font-size:0.88rem;
     color:var(--fg-dim); font-variant-numeric: tabular-nums; }
   .indicator b { color:var(--fg); font-weight:600; }
   .progress { position:fixed; left:0; top:0; height:3px; z-index:200; background:var(--accent); transition:width 300ms; }
@@ -148,6 +148,8 @@
   .s-bigq figure.bg img { width:100%; height:100%; object-fit:cover; filter:brightness(0.42) blur(1px); }
   .s-bigq .overlay { position:relative; z-index:2; padding:8vh 10vw; text-align:center;
     display:flex; flex-direction:column; align-items:center; justify-content:center; }
+  .s-bigq .eyebrow { font-size:0.9rem; letter-spacing:0.3em; color:var(--accent);
+    text-transform:uppercase; margin-bottom:18px; font-weight:700; text-shadow:0 2px 12px rgba(0,0,0,0.6); }
   .s-bigq h2 { font-size:clamp(2.4rem, 6vw, 5rem); line-height:1.15; max-width:20ch; text-shadow:0 4px 24px rgba(0,0,0,0.6); }
 
   /* video */
@@ -223,148 +225,142 @@
   <div class="divider-num">Part 1</div>
   <h2 class="divider-title">AI 大浪來了，媒體受衝擊</h2>
 </section>
-<section class="slide s-text" data-idx="3">
-  <h2>少時不讀書<br>長大當記者</h2>
-</section>
-<section class="slide s-longlist" data-idx="4">
+<section class="slide s-longlist" data-idx="3">
   <h2>2026 年，不好的開局</h2>
   <ol class="longlist"><li><span class="ln">01</span><span class="lt">華郵裁員300位編採人員，關閉體育版、圖書版，裁撤中東、印度與澳洲等地駐外記者，資源集中在政治、商業、科技、健康和氣候，報導重點轉到全國受眾；AI整合到新聞產製流程當中，包含管理讀者評論、製作Podcast，建立自有AI搜尋工具或資料庫服務。</span></li><li><span class="ln">02</span><span class="lt">BBC 4月宣布裁1,800~2,000個職位，每10人就有1人需離職，以減輕「龐大財務壓力」、達成未來2年樽節新台幣214億元目標。</span></li><li><span class="ln">03</span><span class="lt">根據就業諮詢公司，2025年，美國媒體業裁撤17,163個崗位，洛杉磯時報、NBC新聞、CBS新聞等，都因廣告收入下降、債台高築、受眾轉向社群平台與AI，持續成本清算轉型。</span></li><li><span class="ln">04</span><span class="lt">關鍵評論網、TVBS裁員</span></li></ol>
 </section>
-<section class="slide s-img-text" data-idx="5">
+<section class="slide s-img-text" data-idx="4">
   <h2>完蛋了，這些職業都要失業啦</h2>
   <figure><img src="./assets/AI_job_replace.png" alt=""><figcaption>翻譯蹲完記者蹲，記者蹲，記者蹲完工程師蹲</figcaption></figure>
   <p class="body">迪士尼宣布裁員1,000人，波及影視、行銷、ESPN和公司總部等部門。漫威約8%人力遭到解僱。Snapchat母公司宣布裁員1,000人，占整體人力16%。公司將裁員歸咎於「AI的快速發展」，稱AI進步有助員工減少重複性工作。</p>
 </section>
-<section class="slide s-image" data-idx="6">
+<section class="slide s-image" data-idx="5">
   <h2>其實，我更忙了</h2>
   <figure><img src="./assets/DW_ai.png" alt=""></figure>
   <p class="caption">德國之聲AI發展主管的分享</p>
 </section>
-<section class="slide s-tags" data-idx="7">
+<section class="slide s-tags" data-idx="6">
   <h2>AI 熱詞你聽過幾個？</h2>
   <div class="tag-rows"><div class="tag-row"><span class="tag-chip">ChatGPT</span><span class="tag-chip">Claude</span><span class="tag-chip">Gemini</span><span class="tag-chip">Grok</span><span class="tag-chip">Perplexity</span></div><div class="tag-row"><span class="tag-chip">Midjourney</span><span class="tag-chip">Nano Banana</span><span class="tag-chip">Seedance</span></div><div class="tag-row"><span class="tag-chip">Copilot</span><span class="tag-chip">Vibe Coding</span><span class="tag-chip">ClaudeCode</span><span class="tag-chip">Agentic Coding</span><span class="tag-chip">Harness Coding</span></div><div class="tag-row"><span class="tag-chip">OpenClaw</span><span class="tag-chip">Hermes Agent</span></div></div>
 </section>
-<section class="slide s-divider" data-idx="8">
+<section class="slide s-divider" data-idx="7">
   <div class="divider-num">Part 2</div>
   <h2 class="divider-title">你的識讀能力幾級？</h2>
 </section>
-<section class="slide s-paragraph" data-idx="9">
+<section class="slide s-paragraph" data-idx="8">
   <h2>literacy</h2>
   <p class="para">談談古老的這個字 literacy。本來是在講國家的人識不識「字」，因為識字，整體素質、國力才能提升。<br><br>現代已擴展為獲取、理解、創造與傳達資訊的綜合能力，包含電腦素養、金融知識、媒體識讀等專業技能。它是個人賦權、終身學習及融入社會的關鍵基礎。</p>
 </section>
-<section class="slide s-image" data-idx="10">
+<section class="slide s-image" data-idx="9">
   <h2>這張照片哪裡怪 1？</h2>
   <figure><img src="./assets/a_younger_president_in_the_white_house_oval_office_2024.png" alt=""></figure>
   <p class="caption">這張照片哪裡怪 1</p>
 </section>
-<section class="slide s-image" data-idx="11">
+<section class="slide s-image" data-idx="10">
   <h2>這張照片哪裡怪 2026？</h2>
   <figure><img src="./assets/a_younger_president_in_the_white_house_oval_office_2026.png" alt=""></figure>
   <p class="caption">這張照片哪裡怪 2</p>
 </section>
-<section class="slide s-img-ctx" data-idx="12">
+<section class="slide s-img-ctx" data-idx="11">
   <h2>這張照片哪裡怪 2？</h2>
   <p class="context">凱特王妃術後首張官方照疑遭修改 美聯路透法新等多家媒體撤稿。<br>意在平息公眾對凱特健康情形臆測的照片卻引來更多傳言和紛擾......美聯社、路透社、法新社等國際通訊社，以及Getty、Shutterstock等圖庫公司陸續撤回照片，並通知客戶停止使用。撤圖的主要原因是照片修改幅度過大、有經數位技術改造的痕跡。未有跡象顯示照片為偽造。</p>
   <figure><img src="./assets/kate1.png" alt=""></figure>
   <p class="caption">這張照片哪裡怪 3</p>
 </section>
-<section class="slide s-image" data-idx="13">
+<section class="slide s-image" data-idx="12">
   <h2>這張照片哪裡怪 2？</h2>
   <figure><img src="./assets/kate2.jpg" alt=""></figure>
   <p class="caption">你不說我真不知道</p>
 </section>
-<section class="slide s-divider" data-idx="14">
+<section class="slide s-divider" data-idx="13">
   <div class="divider-num">Part 3</div>
   <h2 class="divider-title">新聞倫理的新課題：這樣可以嗎？</h2>
 </section>
-<section class="slide s-image" data-idx="15">
+<section class="slide s-image" data-idx="14">
   <h2>這樣可以嗎之一？</h2>
   <figure><img src="./assets/TVBS.jpg" alt=""></figure>
   <p class="caption">做得出來的請舉手</p>
 </section>
-<section class="slide s-image" data-idx="16">
+<section class="slide s-image" data-idx="15">
   <h2>這樣可以嗎之二？</h2>
   <figure><img src="./assets/sakura.png" alt=""></figure>
   <p class="caption">有一個小 mark</p>
 </section>
-<section class="slide s-image" data-idx="17">
+<section class="slide s-image" data-idx="16">
   <h2>這樣可以嗎之二？</h2>
   <figure><img src="./assets/sakura-gen.png" alt=""></figure>
   <p class="caption">我...只是想要...對焦</p>
 </section>
-<section class="slide s-video" data-idx="18">
+<section class="slide s-video" data-idx="17">
   <h2>這樣可以嗎之三？</h2>
   <figure><video src="./assets/realtime-photo.mov" controls preload="metadata" playsinline></video></figure>
   <p class="caption">仔細看，它長高了</p>
 </section>
-<section class="slide s-image" data-idx="19">
+<section class="slide s-image" data-idx="18">
   <h2>理解 LLM 的原理</h2>
   <figure><img src="./assets/WhatsLLM.png" alt=""></figure>
   <p class="caption">你一定要知道它是接龍引擎</p>
 </section>
-<section class="slide s-image" data-idx="20">
+<section class="slide s-image" data-idx="19">
   <h2>它哪天說不定幫你個大忙</h2>
   <figure><img src="./assets/dirty-data.png" alt=""></figure>
   <p class="caption">Garbage In Garbage Out</p>
 </section>
-<section class="slide s-divider" data-idx="21">
+<section class="slide s-divider" data-idx="20">
   <div class="divider-num">Part 4</div>
   <h2 class="divider-title">中央社媒體實驗室的 AI 應用</h2>
 </section>
-<section class="slide s-paragraph" data-idx="22">
+<section class="slide s-paragraph" data-idx="21">
   
   <p class="para">比賽就是這樣的 好像跑步游泳一樣 還不是你做什麼他就做什麼<br><br>但全球華文媒體有用過飛鴿傳書又有用過AI的，只有中央社</p>
 </section>
-<section class="slide s-video ctx" data-idx="23">
+<section class="slide s-video ctx" data-idx="22">
   <h2>志明編輯助手</h2>
   <p class="context">以往不同新聞領域、不同語種的新聞，需要不同職務的人來處理，但是有了助手？</p>
   <figure><video src="./assets/jiming_combine.mp4" controls preload="metadata" playsinline></video></figure>
   <p class="caption">綜合外電報導？交給志明</p>
 </section>
-<section class="slide s-video" data-idx="24">
+<section class="slide s-video" data-idx="23">
   <h2>Agents 時代來臨</h2>
   <figure><video src="./assets/agent-line.mp4" controls preload="metadata" playsinline></video></figure>
   <p class="caption">組一張圖，你先開 photoshop？</p>
 </section>
-<section class="slide s-video" data-idx="25">
+<section class="slide s-video" data-idx="24">
   <h2>零點擊時代的新聞會是怎麼樣 1</h2>
   <figure><video src="./assets/fake.mov" controls preload="metadata" playsinline></video></figure>
   <p class="caption">零點擊？示範給你看</p>
 </section>
-<section class="slide s-video" data-idx="26">
+<section class="slide s-video" data-idx="25">
   <h2>零點擊時代的新聞會是怎麼樣 2</h2>
   <figure><video src="./assets/AskCNA.mov" controls preload="metadata" playsinline></video></figure>
   <p class="caption">Ask CNA</p>
 </section>
-<section class="slide s-image" data-idx="27">
+<section class="slide s-image" data-idx="26">
   <h2>零點擊時代的新聞會是怎麼樣 3</h2>
   <figure><img src="./assets/cna-mcp.png" alt=""></figure>
   <p class="caption">在 Claude、ChatGPT 就能問中央社</p>
 </section>
-<section class="slide s-divider" data-idx="28">
-  <div class="divider-num">結 語</div>
-  <h2 class="divider-title">新聞的未來？</h2>
-</section>
-<section class="slide s-bigq" data-idx="29">
+<section class="slide s-bigq" data-idx="27">
   <figure class="bg"><img src="./assets/AI_combo.png" alt=""></figure>
   <div class="overlay">
+    <div class="eyebrow">結 語</div>
     <h2>民主社會可以沒有新聞嗎？</h2>
     <p class="caption">記者在現場</p>
   </div>
 </section>
-<section class="slide s-img-lead" data-idx="30">
+<section class="slide s-img-lead" data-idx="28">
   <h2>學習在 AI 時代，你的準備是什麼？</h2>
   <p class="lead">好像不用再問要不要學程式？<br>至少，你要會問 AI。那...問哪個？</p>
   <figure><img src="./assets/mav_council_3.png" alt=""></figure>
   <p class="caption">小孩子才做選擇，我全都問</p>
 </section>
-<section class="slide s-img-lead" data-idx="31">
+<section class="slide s-img-lead" data-idx="29">
   <h2>要不要學程式？</h2>
   <p class="lead">Prompt: 仿照間諜家家酒的三大角色，把臉改成中年男子</p>
   <figure><img src="./assets/mav_council-ojisan.png" alt=""></figure>
   <p class="caption">世界萬物皆有名字，有名字才能開始</p>
 </section>
-<section class="slide s-image" data-idx="32">
+<section class="slide s-image" data-idx="30">
   <h2>大叔說教時間</h2>
   <figure><img src="./assets/ending.png" alt=""></figure>
   <p class="caption">參加我是海外特派員，增廣見聞</p>
@@ -374,7 +370,7 @@
 <div class="ctrl prev" id="prevBtn"><svg viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg></div>
 <div class="ctrl next" id="nextBtn"><svg viewBox="0 0 24 24"><path d="M9 18l6-6-6-6"/></svg></div>
 
-<div class="indicator"><b id="curPage">1</b> / 33</div>
+<div class="indicator"><b id="curPage">1</b> / 31</div>
 
 <div class="thumbs-zone"><div class="thumbs" id="thumbs"></div></div>
 

@@ -37,11 +37,6 @@ SLIDES = [
     {"kind": "divider", "num": "Part 1", "title": "AI 大浪來了，媒體受衝擊"},
 
     {
-        "kind": "text",
-        "title": "少時不讀書<br>長大當記者",
-    },
-
-    {
         "kind": "long-list",
         "title": "2026 年，不好的開局",
         "items": [
@@ -205,11 +200,10 @@ SLIDES = [
         "caption": "在 Claude、ChatGPT 就能問中央社",
     },
 
-    # ─── 結語 ───
-    {"kind": "divider", "num": "結 語", "title": "新聞的未來？"},
-
+    # ─── 結語 ───（合併 divider + 大哉問為單頁）
     {
         "kind": "image-big-question",
+        "eyebrow": "結 語",
         "title": "民主社會可以沒有新聞嗎？",
         "src": media("AI_combo.png"),
         "caption": "記者在現場",
@@ -315,9 +309,11 @@ def render_slide(idx: int, s: dict) -> str:
 </section>'''
 
     if k == "image-big-question":
+        eyebrow = f'<div class="eyebrow">{s["eyebrow"]}</div>' if s.get("eyebrow") else ""
         return f'''<section class="slide s-bigq" data-idx="{idx}">
   <figure class="bg"><img src="{s["src"]}" alt=""></figure>
   <div class="overlay">
+    {eyebrow}
     <h2>{s["title"]}</h2>
     <p class="caption">{s.get("caption","")}</p>
   </div>
@@ -396,10 +392,10 @@ HTML = f'''<!DOCTYPE html>
   @keyframes bob {{ 0%,100% {{ transform:translate(-50%, 0); }} 50% {{ transform:translate(-50%, 5px); }} }}
 
   /* brand + theme toggle */
-  .brand {{ position:fixed; top:22px; left:26px; z-index:100; display:flex; align-items:center; gap:10px;
-    padding:6px 10px; border-radius:8px; background:rgba(255,255,255,0.04); backdrop-filter:blur(6px); }}
-  .brand img {{ height:36px; width:auto; display:block; filter:brightness(8) saturate(0); }}
-  .brand span {{ font-size:0.78rem; letter-spacing:0.08em; color:var(--fg-dim); }}
+  .brand {{ position:fixed; bottom:16px; right:24px; z-index:100; display:flex; align-items:center; gap:10px;
+    padding:6px 12px; border-radius:8px; background:rgba(255,255,255,0.04); backdrop-filter:blur(6px); }}
+  .brand img {{ height:28px; width:auto; display:block; filter:brightness(8) saturate(0); }}
+  .brand span {{ font-size:0.72rem; letter-spacing:0.08em; color:var(--fg-dim); }}
   .theme-toggle {{ position:fixed; top:22px; right:26px; z-index:100; width:40px; height:40px;
     border-radius:50%; border:1px solid rgba(255,255,255,0.2); background:rgba(255,255,255,0.04);
     color:var(--fg); cursor:pointer; display:flex; align-items:center; justify-content:center; transition:background 200ms; }}
@@ -413,7 +409,7 @@ HTML = f'''<!DOCTYPE html>
   .ctrl.prev {{ left:0; }} .ctrl.next {{ right:0; }}
   .ctrl svg {{ width:44px; height:44px; stroke:currentColor; fill:none; stroke-width:2; }}
 
-  .indicator {{ position:fixed; bottom:20px; right:28px; z-index:100; font-size:0.88rem;
+  .indicator {{ position:fixed; bottom:20px; left:28px; z-index:100; font-size:0.88rem;
     color:var(--fg-dim); font-variant-numeric: tabular-nums; }}
   .indicator b {{ color:var(--fg); font-weight:600; }}
   .progress {{ position:fixed; left:0; top:0; height:3px; z-index:200; background:var(--accent); transition:width 300ms; }}
@@ -513,6 +509,8 @@ HTML = f'''<!DOCTYPE html>
   .s-bigq figure.bg img {{ width:100%; height:100%; object-fit:cover; filter:brightness(0.42) blur(1px); }}
   .s-bigq .overlay {{ position:relative; z-index:2; padding:8vh 10vw; text-align:center;
     display:flex; flex-direction:column; align-items:center; justify-content:center; }}
+  .s-bigq .eyebrow {{ font-size:0.9rem; letter-spacing:0.3em; color:var(--accent);
+    text-transform:uppercase; margin-bottom:18px; font-weight:700; text-shadow:0 2px 12px rgba(0,0,0,0.6); }}
   .s-bigq h2 {{ font-size:clamp(2.4rem, 6vw, 5rem); line-height:1.15; max-width:20ch; text-shadow:0 4px 24px rgba(0,0,0,0.6); }}
 
   /* video */
