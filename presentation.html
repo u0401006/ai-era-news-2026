@@ -19,7 +19,16 @@
   #deck { position:relative; height:100vh; width:100vw; }
   .slide { position:absolute; inset:0; display:flex; flex-direction:column;
     justify-content:center; align-items:center; padding:7vh 6vw 10vh; box-sizing:border-box;
-    opacity:0; pointer-events:none; transition:opacity 380ms, transform 380ms; transform:translateX(30px); overflow:hidden; }
+    opacity:0; pointer-events:none; transition:opacity 380ms, transform 380ms; transform:translateX(30px);
+    overflow-y:auto; overflow-x:hidden; scrollbar-width:thin; scrollbar-color:rgba(255,255,255,0.2) transparent; }
+  .slide::-webkit-scrollbar { width:8px; }
+  .slide::-webkit-scrollbar-thumb { background:rgba(255,255,255,0.2); border-radius:4px; }
+  .slide::-webkit-scrollbar-thumb:hover { background:rgba(255,255,255,0.4); }
+  /* hint indicator when slide overflows */
+  .slide .scroll-hint { position:absolute; bottom:16px; left:50%; transform:translateX(-50%);
+    color:var(--accent); font-size:0.78rem; letter-spacing:0.1em; opacity:0.7;
+    pointer-events:none; animation:bob 1.8s ease-in-out infinite; }
+  @keyframes bob { 0%,100% { transform:translate(-50%, 0); } 50% { transform:translate(-50%, 5px); } }
   .slide.active { opacity:1; pointer-events:auto; transform:translateX(0); }
   .speaker-notes { display:none; }
   body.show-notes .speaker-notes { display:block; position:fixed; bottom:90px; left:24px; right:24px;
@@ -444,11 +453,33 @@
   });
   const thumbEls = thumbs.querySelectorAll('.thumb');
 
+  function addScrollHint(sl) {
+    // Only show if content overflows AND we haven't added one yet
+    let existing = sl.querySelector('.scroll-hint');
+    const overflows = sl.scrollHeight > sl.clientHeight + 4;
+    if (overflows && !existing) {
+      const hint = document.createElement('div');
+      hint.className = 'scroll-hint';
+      hint.innerHTML = '▼ 往下捲動';
+      sl.appendChild(hint);
+      sl.addEventListener('scroll', () => {
+        hint.style.opacity = sl.scrollTop > 40 ? '0' : '0.7';
+      }, { passive: true });
+    } else if (!overflows && existing) {
+      existing.remove();
+    }
+  }
+
   function render() {
     slides.forEach((sl, i) => {
       sl.classList.toggle('active', i === cur);
       const v = sl.querySelector('video');
       if (v && i !== cur) v.pause();
+      if (i === cur) {
+        sl.scrollTop = 0;
+        // defer so layout settles (images may change size after load)
+        requestAnimationFrame(() => addScrollHint(sl));
+      }
     });
     thumbEls.forEach((t, i) => t.classList.toggle('active', i === cur));
     curPage.textContent = cur + 1;
@@ -456,6 +487,12 @@
     const active = thumbEls[cur];
     if (active) active.scrollIntoView({ block:'nearest', inline:'center', behavior:'smooth' });
   }
+
+  // re-check overflow after images load or window resizes
+  window.addEventListener('resize', () => { const s = slides[cur]; if (s) addScrollHint(s); });
+  document.querySelectorAll('.slide img').forEach(img => {
+    img.addEventListener('load', () => { const s = slides[cur]; if (s) addScrollHint(s); });
+  });
   function go(i) { cur = Math.max(0, Math.min(total - 1, i)); render(); }
   const next = () => go(cur + 1);
   const prev = () => go(cur - 1);
