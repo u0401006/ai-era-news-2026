@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
-"""Build AI時代的新聞工作 deck — v2, driven by the Google Drive MD source.
+"""Build AI時代的新聞工作 deck — v3, strict MD-driven.
 
-Outputs: presentation.html (single-file, references ./assets/ via symlink).
+Rule: only use text the user wrote in the MD — no editorial additions.
 """
 import base64
 from pathlib import Path
@@ -18,263 +18,224 @@ def media(fn: str) -> str:
 
 logo_b64 = base64.b64encode(LOGO_PATH.read_bytes()).decode("ascii")
 
-# ============================================================
-# Slide definitions — mapped from the MD outline
-# ============================================================
-YELLOW = "#F4CC2F"
 
 SLIDES = [
-    # 0. Title
+    # Title
     {
         "kind": "title",
-        "title": "AI 時代的<br><span class='hl'>新聞工作</span>",
-        "subtitle": "當機器也能寫稿、生圖、上字幕",
+        "title": "AI 時代的新聞工作",
         "footer": "中央社媒體實驗室 · 2026 海外特派員營",
     },
-    # 1. Opening video
+    # Opening
     {
         "kind": "video-hero",
         "src": media("jiming_opening.mp4"),
-        "title": "大家好",
-        "speaker": "志明主播開場。讓 AI 自己說 hello。",
+        "title": "特別來賓",
     },
 
     # ─── Part 1 ───
-    {"kind": "divider", "num": "Part 1", "title": "AI 大浪來了<br>媒體受衝擊"},
+    {"kind": "divider", "num": "Part 1", "title": "AI 大浪來了，媒體受衝擊"},
 
-    # 少時不讀書長大當記者 (section hook)
     {
         "kind": "text",
-        "eyebrow": "自嘲",
         "title": "少時不讀書<br>長大當記者",
-        "body": "——如今這句話還成立嗎？",
     },
 
-    # 2026年，不好的開局 — 四個裁員數字 2x2
     {
-        "kind": "number-grid",
-        "title": "2026 年<br>不好的開局",
-        "cards": [
-            {"num": "300", "label": "Washington Post",
-             "body": "華郵裁編採人員<br>關體育版、圖書版<br>撤中東、印澳駐外"},
-            {"num": "2,000", "label": "BBC",
-             "body": "裁約 1,800–2,000 人<br>10 人中 1 人離職<br>2 年省新台幣 214 億"},
-            {"num": "17,163", "label": "美國媒體 2025",
-             "body": "LAT、NBC、CBS 輪番清算<br>廣告下降、受眾轉社群"},
-            {"num": "關鍵+TVBS", "label": "台灣",
-             "body": "內容農場潮退<br>電視台也開始縮編"},
+        "kind": "long-list",
+        "title": "2026 年，不好的開局",
+        "items": [
+            "華郵裁員300位編採人員，關閉體育版、圖書版，裁撤中東、印度與澳洲等地駐外記者，資源集中在政治、商業、科技、健康和氣候，報導重點轉到全國受眾；AI整合到新聞產製流程當中，包含管理讀者評論、製作Podcast，建立自有AI搜尋工具或資料庫服務。",
+            "BBC 4月宣布裁1,800~2,000個職位，每10人就有1人需離職，以減輕「龐大財務壓力」、達成未來2年樽節新台幣214億元目標。",
+            "根據就業諮詢公司，2025年，美國媒體業裁撤17,163個崗位，洛杉磯時報、NBC新聞、CBS新聞等，都因廣告收入下降、債台高築、受眾轉向社群平台與AI，持續成本清算轉型。",
+            "關鍵評論網、TVBS裁員",
         ],
     },
 
-    # 完蛋了，這些職業都要失業啦 — 圖 + 迪士尼 bullet
     {
-        "kind": "image-with-bullet",
+        "kind": "image-with-text",
+        "title": "完蛋了，這些職業都要失業啦",
         "src": media("AI_job_replace.png"),
-        "title": "完蛋了<br>這些職業都要失業啦",
-        "caption": "翻譯蹲完記者蹲，記者蹲完工程師蹲",
-        "bullet": {
-            "label": "迪士尼 / Snap",
-            "body": "迪士尼裁 1,000 人，漫威裁員 8%；Snap 母公司裁 16%——理由都是「AI 快速發展」",
-        },
+        "img_caption": "翻譯蹲完記者蹲，記者蹲，記者蹲完工程師蹲",
+        "body": "迪士尼宣布裁員1,000人，波及影視、行銷、ESPN和公司總部等部門。漫威約8%人力遭到解僱。Snapchat母公司宣布裁員1,000人，占整體人力16%。公司將裁員歸咎於「AI的快速發展」，稱AI進步有助員工減少重複性工作。",
     },
 
-    # 其實，我更忙了 (DW)
     {
         "kind": "image",
-        "src": media("DW_ai.png"),
         "title": "其實，我更忙了",
-        "caption": "德國之聲 AI 發展主管的現場分享",
+        "src": media("DW_ai.png"),
+        "caption": "德國之聲AI發展主管的分享",
     },
 
-    # AI 熱詞
     {
-        "kind": "tags",
-        "title": "AI 熱詞<br>你聽過幾個？",
-        "groups": [
-            ("對話式", ["ChatGPT", "Claude", "Gemini", "Grok", "Perplexity"]),
-            ("生成式", ["Midjourney", "Nano Banana", "Seedance"]),
-            ("開發向", ["Copilot", "Vibe Coding", "Claude Code", "Agentic Coding", "Harness Coding"]),
-            ("內部生態", ["OpenClaw", "Hermes Agent"]),
+        "kind": "tags-plain",
+        "title": "AI 熱詞你聽過幾個？",
+        "rows": [
+            ["ChatGPT", "Claude", "Gemini", "Grok", "Perplexity"],
+            ["Midjourney", "Nano Banana", "Seedance"],
+            ["Copilot", "Vibe Coding", "ClaudeCode", "Agentic Coding", "Harness Coding"],
+            ["OpenClaw", "Hermes Agent"],
         ],
     },
 
     # ─── Part 2 ───
-    {"kind": "divider", "num": "Part 2", "title": "你的識讀能力<br>幾級？"},
+    {"kind": "divider", "num": "Part 2", "title": "你的識讀能力幾級？"},
 
-    # Literacy
     {
-        "kind": "text",
-        "eyebrow": "li·te·ra·cy",
-        "title": "古老的這個字",
-        "body": "過去是「識字」——讀得懂文。<br>現在是<span class='hl'>獲取、理解、創造、傳達</span>資訊的綜合能力。<br>媒體識讀、金融知識、電腦素養，都是它的延伸。",
+        "kind": "paragraph",
+        "title": "literacy",
+        "body": "談談古老的這個字 literacy。本來是在講國家的人識不識「字」，因為識字，整體素質、國力才能提升。<br><br>現代已擴展為獲取、理解、創造與傳達資訊的綜合能力，包含電腦素養、金融知識、媒體識讀等專業技能。它是個人賦權、終身學習及融入社會的關鍵基礎。",
     },
 
-    # 這張照片哪裡怪 1 — 總統年輕化
     {
-        "kind": "compare2",
-        "title": "這張照片哪裡怪？<br><small>同一個 prompt，兩年差距</small>",
-        "left": {"src": media("a_younger_president_in_the_white_house_oval_office_2024.png"), "label": "2024"},
-        "right": {"src": media("a_younger_president_in_the_white_house_oval_office_2026.png"), "label": "2026"},
-        "speaker": "模型對「年輕總統」的腦中印象正在改變。我們沒察覺。",
+        "kind": "image",
+        "title": "這張照片哪裡怪 1？",
+        "src": media("a_younger_president_in_the_white_house_oval_office_2024.png"),
+        "caption": "這張照片哪裡怪 1",
     },
 
-    # 凱特王妃 context + 2 圖
     {
-        "kind": "compare2-with-context",
-        "title": "這張照片哪裡怪？",
-        "context": "凱特王妃術後首張官方照疑遭修改，<span class='hl'>美聯、路透、法新</span>等多家媒體撤稿。原意在平息公眾對凱特健康情形的臆測，卻引來更多紛擾——撤圖主因：修改幅度過大、有數位改造痕跡。未有跡象顯示照片為偽造。",
-        "left": {"src": media("kate1.png"), "label": "官方發布照"},
-        "right": {"src": media("kate2.jpg"), "label": "被標出的修圖處"},
+        "kind": "image",
+        "title": "這張照片哪裡怪 2026？",
+        "src": media("a_younger_president_in_the_white_house_oval_office_2026.png"),
+        "caption": "這張照片哪裡怪 2",
+    },
+
+    {
+        "kind": "image-with-context",
+        "title": "這張照片哪裡怪 2？",
+        "context": "凱特王妃術後首張官方照疑遭修改 美聯路透法新等多家媒體撤稿。<br>意在平息公眾對凱特健康情形臆測的照片卻引來更多傳言和紛擾......美聯社、路透社、法新社等國際通訊社，以及Getty、Shutterstock等圖庫公司陸續撤回照片，並通知客戶停止使用。撤圖的主要原因是照片修改幅度過大、有經數位技術改造的痕跡。未有跡象顯示照片為偽造。",
+        "src": media("kate1.png"),
+        "caption": "這張照片哪裡怪 3",
+    },
+
+    {
+        "kind": "image",
+        "title": "這張照片哪裡怪 2？",
+        "src": media("kate2.jpg"),
+        "caption": "你不說我真不知道",
     },
 
     # ─── Part 3 ───
-    {"kind": "divider", "num": "Part 3", "title": "新聞倫理的新課題<br><small>這樣可以嗎？</small>"},
+    {"kind": "divider", "num": "Part 3", "title": "新聞倫理的新課題：這樣可以嗎？"},
 
-    # 這樣可以嗎 · 一 TVBS
     {
         "kind": "image",
+        "title": "這樣可以嗎之一？",
         "src": media("TVBS.jpg"),
-        "title": "這樣可以嗎 · 一",
-        "caption": "做得出來的請舉手——媒體用 AI 生成當主圖",
+        "caption": "做得出來的請舉手",
     },
 
-    # 這樣可以嗎 · 二 櫻花
     {
-        "kind": "compare2",
-        "title": "這樣可以嗎 · 二",
-        "left": {"src": media("sakura.png"), "label": "有一個小 mark"},
-        "right": {"src": media("sakura-gen.png"), "label": "我只是想要⋯⋯對焦"},
-        "speaker": "手機上一鍵美化，連新聞攝影都要問一次「這還算真實嗎？」",
+        "kind": "image",
+        "title": "這樣可以嗎之二？",
+        "src": media("sakura.png"),
+        "caption": "有一個小 mark",
     },
 
-    # 這樣可以嗎 · 三 原況照片
+    {
+        "kind": "image",
+        "title": "這樣可以嗎之二？",
+        "src": media("sakura-gen.png"),
+        "caption": "我...只是想要...對焦",
+    },
+
     {
         "kind": "video",
+        "title": "這樣可以嗎之三？",
         "src": media("realtime-photo.mov"),
-        "title": "這樣可以嗎 · 三",
-        "caption": "仔細看——它長高了。iPhone 原況照片也能被改造",
+        "caption": "仔細看，它長高了",
     },
 
-    # 理解 LLM 原理
     {
         "kind": "image",
-        "src": media("WhatsLLM.png"),
         "title": "理解 LLM 的原理",
-        "caption": "你一定要知道——它是接龍引擎",
+        "src": media("WhatsLLM.png"),
+        "caption": "你一定要知道它是接龍引擎",
     },
 
-    # 它哪天說不定幫你個大忙
     {
         "kind": "image",
+        "title": "它哪天說不定幫你個大忙",
         "src": media("dirty-data.png"),
-        "title": "它哪天說不定<br>幫你個大忙",
-        "caption": "Garbage In, Garbage Out——餵它什麼，就吐出什麼",
+        "caption": "Garbage In Garbage Out",
     },
 
-    # ─── Part 4 (MD typo: labeled Part3) ───
-    {"kind": "divider", "num": "Part 4", "title": "中央社媒體實驗室的<br>AI 應用"},
+    # ─── Part 4 ───
+    {"kind": "divider", "num": "Part 4", "title": "中央社媒體實驗室的 AI 應用"},
 
-    # 比賽就是這樣 metaphor
     {
-        "kind": "text",
-        "eyebrow": "比喻",
-        "title": "比賽就是這樣",
-        "body": "好像跑步、游泳一樣——<br>還不是你做什麼，他就做什麼？<br><br><span class='hl'>但全球華文媒體</span>，用過飛鴿傳書又用過 AI 的，<br>只有<span class='hl'>中央社</span>。",
+        "kind": "paragraph",
+        "body": "比賽就是這樣的 好像跑步游泳一樣 還不是你做什麼他就做什麼<br><br>但全球華文媒體有用過飛鴿傳書又有用過AI的，只有中央社",
     },
 
-    # 志明編輯助手 + context
     {
         "kind": "video-with-context",
-        "src": media("jiming_combine.mp4"),
         "title": "志明編輯助手",
-        "context": "以往不同新聞領域、不同語種的新聞，需要不同職務的人處理。<br>但是——有了助手？",
+        "context": "以往不同新聞領域、不同語種的新聞，需要不同職務的人來處理，但是有了助手？",
+        "src": media("jiming_combine.mp4"),
         "caption": "綜合外電報導？交給志明",
     },
 
-    # Agents 時代
     {
         "kind": "video",
-        "src": media("agent-line.mp4"),
         "title": "Agents 時代來臨",
-        "caption": "組一張圖，你還先開 Photoshop？",
+        "src": media("agent-line.mp4"),
+        "caption": "組一張圖，你先開 photoshop？",
     },
 
-    # 零點擊 1/3 fake
     {
         "kind": "video",
+        "title": "零點擊時代的新聞會是怎麼樣 1",
         "src": media("fake.mov"),
-        "title": "零點擊時代 · 1/3",
-        "caption": "假流量示範——機器觀看、機器分享、機器留言",
+        "caption": "零點擊？示範給你看",
     },
 
-    # 零點擊 2/3 AskCNA
     {
         "kind": "video",
+        "title": "零點擊時代的新聞會是怎麼樣 2",
         "src": media("AskCNA.mov"),
-        "title": "零點擊時代 · 2/3",
-        "caption": "Ask CNA——把 40 年社稿資料庫變成對話介面",
+        "caption": "Ask CNA",
     },
 
-    # 零點擊 3/3 cna-mcp
     {
         "kind": "image",
+        "title": "零點擊時代的新聞會是怎麼樣 3",
         "src": media("cna-mcp.png"),
-        "title": "零點擊時代 · 3/3",
-        "caption": "在 Claude、ChatGPT 就能直接問中央社",
+        "caption": "在 Claude、ChatGPT 就能問中央社",
     },
 
     # ─── 結語 ───
     {"kind": "divider", "num": "結 語", "title": "新聞的未來？"},
 
-    # 民主社會可以沒有新聞嗎？
     {
         "kind": "image-big-question",
+        "title": "民主社會可以沒有新聞嗎？",
         "src": media("AI_combo.png"),
-        "title": "民主社會<br>可以沒有<span class='hl'>新聞</span>嗎？",
         "caption": "記者在現場",
     },
 
-    # 學習在 AI 時代，你的準備是什麼
-    {
-        "kind": "text",
-        "eyebrow": "準 備",
-        "title": "學習在 AI 時代<br>你的準備是什麼？",
-    },
-
-    # 要不要學程式 (1)
     {
         "kind": "image-with-lead",
+        "title": "學習在 AI 時代，你的準備是什麼？",
+        "lead": "好像不用再問要不要學程式？<br>至少，你要會問 AI。那...問哪個？",
         "src": media("mav_council_3.png"),
-        "title": "要不要學程式？",
-        "lead": "至少，你要<span class='hl'>會問 AI</span>。問哪個？",
         "caption": "小孩子才做選擇，我全都問",
     },
 
-    # 要不要學程式 (2)
     {
         "kind": "image-with-lead",
-        "src": media("mav_council-ojisan.png"),
         "title": "要不要學程式？",
         "lead": "Prompt: 仿照間諜家家酒的三大角色，把臉改成中年男子",
+        "src": media("mav_council-ojisan.png"),
         "caption": "世界萬物皆有名字，有名字才能開始",
     },
 
-    # 大叔說教時間 — 魔法論 + ending
     {
-        "kind": "image-with-lead",
-        "src": media("ending.png"),
+        "kind": "image",
         "title": "大叔說教時間",
-        "lead": "所謂的魔法就是<span class='hl'>想像</span>的世界——<br>無法想像的事情就無法用「魔法」重現　⇐ AI",
-        "caption": "參加「我是海外特派員」，增廣見聞",
-    },
-
-    # End slide
-    {
-        "kind": "text",
-        "big": True,
-        "title": "動手用 AI<br>才是<span class='hl'>識讀</span>的開始",
-        "subtitle": "Q & A · Thank you",
-        "footer": "中央社媒體實驗室 · Media Lab",
+        "src": media("ending.png"),
+        "caption": "參加我是海外特派員，增廣見聞",
     },
 ]
 
@@ -284,34 +245,41 @@ SLIDES = [
 # ============================================================
 def render_slide(idx: int, s: dict) -> str:
     k = s["kind"]
-    notes = s.get("speaker", "")
-    notes_html = f'<div class="speaker-notes">{notes}</div>' if notes else ""
 
     if k == "title":
         return f'''<section class="slide s-title" data-idx="{idx}">
   <div class="brand-mark"><img src="data:image/png;base64,{logo_b64}" alt="CNA"></div>
   <h1>{s["title"]}</h1>
-  <p class="subtitle">{s.get("subtitle","")}</p>
   <div class="tag">{s.get("footer","")}</div>
-  {notes_html}
 </section>'''
 
     if k == "divider":
         return f'''<section class="slide s-divider" data-idx="{idx}">
   <div class="divider-num">{s["num"]}</div>
   <h2 class="divider-title">{s["title"]}</h2>
-  {notes_html}
 </section>'''
 
     if k == "text":
-        eyebrow = f'<div class="eyebrow">{s["eyebrow"]}</div>' if s.get("eyebrow") else ""
         body = f'<p class="body">{s["body"]}</p>' if s.get("body") else ""
-        sub = f'<p class="subtitle">{s["subtitle"]}</p>' if s.get("subtitle") else ""
-        footer = f'<div class="tag">{s["footer"]}</div>' if s.get("footer") else ""
-        big = " big" if s.get("big") else ""
-        return f'''<section class="slide s-text{big}" data-idx="{idx}">
-  {eyebrow}<h2>{s["title"]}</h2>{body}{sub}{footer}
-  {notes_html}
+        return f'''<section class="slide s-text" data-idx="{idx}">
+  <h2>{s["title"]}</h2>{body}
+</section>'''
+
+    if k == "paragraph":
+        title = f'<h2>{s["title"]}</h2>' if s.get("title") else ""
+        return f'''<section class="slide s-paragraph" data-idx="{idx}">
+  {title}
+  <p class="para">{s["body"]}</p>
+</section>'''
+
+    if k == "long-list":
+        items = "".join(
+            f'<li><span class="ln">{i+1:02d}</span><span class="lt">{t}</span></li>'
+            for i, t in enumerate(s["items"])
+        )
+        return f'''<section class="slide s-longlist" data-idx="{idx}">
+  <h2>{s["title"]}</h2>
+  <ol class="longlist">{items}</ol>
 </section>'''
 
     if k == "image":
@@ -321,69 +289,21 @@ def render_slide(idx: int, s: dict) -> str:
   {title}
   <figure><img src="{s["src"]}" alt=""></figure>
   {cap}
-  {notes_html}
 </section>'''
 
-    if k == "video":
-        cap = f'<p class="caption">{s["caption"]}</p>' if s.get("caption") else ""
-        title = f'<h2>{s["title"]}</h2>' if s.get("title") else ""
-        return f'''<section class="slide s-video" data-idx="{idx}">
-  {title}
-  <figure><video src="{s["src"]}" controls preload="metadata" playsinline></video></figure>
-  {cap}
-  {notes_html}
-</section>'''
-
-    if k == "video-hero":
-        return f'''<section class="slide s-video-hero" data-idx="{idx}">
+    if k == "image-with-text":
+        return f'''<section class="slide s-img-text" data-idx="{idx}">
   <h2>{s["title"]}</h2>
-  <figure><video src="{s["src"]}" controls preload="metadata" playsinline></video></figure>
-  {notes_html}
+  <figure><img src="{s["src"]}" alt=""><figcaption>{s.get("img_caption","")}</figcaption></figure>
+  <p class="body">{s["body"]}</p>
 </section>'''
 
-    if k == "compare2":
-        l, r = s["left"], s["right"]
-        return f'''<section class="slide s-compare" data-idx="{idx}">
-  <h2>{s["title"]}</h2>
-  <div class="compare-grid">
-    <figure><img src="{l["src"]}" alt=""><figcaption>{l["label"]}</figcaption></figure>
-    <figure><img src="{r["src"]}" alt=""><figcaption>{r["label"]}</figcaption></figure>
-  </div>
-  {notes_html}
-</section>'''
-
-    if k == "compare2-with-context":
-        l, r = s["left"], s["right"]
-        return f'''<section class="slide s-compare ctx" data-idx="{idx}">
+    if k == "image-with-context":
+        return f'''<section class="slide s-img-ctx" data-idx="{idx}">
   <h2>{s["title"]}</h2>
   <p class="context">{s["context"]}</p>
-  <div class="compare-grid">
-    <figure><img src="{l["src"]}" alt=""><figcaption>{l["label"]}</figcaption></figure>
-    <figure><img src="{r["src"]}" alt=""><figcaption>{r["label"]}</figcaption></figure>
-  </div>
-  {notes_html}
-</section>'''
-
-    if k == "number-grid":
-        cards = "".join(
-            f'<div class="ncard"><div class="ncard-num">{c["num"]}</div><div class="ncard-label">{c["label"]}</div><div class="ncard-body">{c["body"]}</div></div>'
-            for c in s["cards"]
-        )
-        return f'''<section class="slide s-numgrid" data-idx="{idx}">
-  <h2>{s["title"]}</h2>
-  <div class="ncards">{cards}</div>
-  {notes_html}
-</section>'''
-
-    if k == "image-with-bullet":
-        b = s["bullet"]
-        return f'''<section class="slide s-img-bullet" data-idx="{idx}">
-  <h2>{s["title"]}</h2>
-  <div class="img-bullet">
-    <figure><img src="{s["src"]}" alt=""><figcaption>{s.get("caption","")}</figcaption></figure>
-    <aside><div class="aside-label">{b["label"]}</div><p>{b["body"]}</p></aside>
-  </div>
-  {notes_html}
+  <figure><img src="{s["src"]}" alt=""></figure>
+  <p class="caption">{s.get("caption","")}</p>
 </section>'''
 
     if k == "image-with-lead":
@@ -392,16 +312,6 @@ def render_slide(idx: int, s: dict) -> str:
   <p class="lead">{s.get("lead","")}</p>
   <figure><img src="{s["src"]}" alt=""></figure>
   <p class="caption">{s.get("caption","")}</p>
-  {notes_html}
-</section>'''
-
-    if k == "video-with-context":
-        return f'''<section class="slide s-video ctx" data-idx="{idx}">
-  <h2>{s["title"]}</h2>
-  <p class="context">{s["context"]}</p>
-  <figure><video src="{s["src"]}" controls preload="metadata" playsinline></video></figure>
-  <p class="caption">{s.get("caption","")}</p>
-  {notes_html}
 </section>'''
 
     if k == "image-big-question":
@@ -411,18 +321,39 @@ def render_slide(idx: int, s: dict) -> str:
     <h2>{s["title"]}</h2>
     <p class="caption">{s.get("caption","")}</p>
   </div>
-  {notes_html}
 </section>'''
 
-    if k == "tags":
-        groups_html = ""
-        for label, tags in s["groups"]:
-            tags_html = "".join(f'<span class="tag-chip">{t}</span>' for t in tags)
-            groups_html += f'<div class="tag-group"><div class="tag-label">{label}</div><div class="tag-chips">{tags_html}</div></div>'
+    if k == "video":
+        cap = f'<p class="caption">{s["caption"]}</p>' if s.get("caption") else ""
+        title = f'<h2>{s["title"]}</h2>' if s.get("title") else ""
+        return f'''<section class="slide s-video" data-idx="{idx}">
+  {title}
+  <figure><video src="{s["src"]}" controls preload="metadata" playsinline></video></figure>
+  {cap}
+</section>'''
+
+    if k == "video-hero":
+        return f'''<section class="slide s-video-hero" data-idx="{idx}">
+  <h2>{s["title"]}</h2>
+  <figure><video src="{s["src"]}" controls preload="metadata" playsinline></video></figure>
+</section>'''
+
+    if k == "video-with-context":
+        return f'''<section class="slide s-video ctx" data-idx="{idx}">
+  <h2>{s["title"]}</h2>
+  <p class="context">{s["context"]}</p>
+  <figure><video src="{s["src"]}" controls preload="metadata" playsinline></video></figure>
+  <p class="caption">{s.get("caption","")}</p>
+</section>'''
+
+    if k == "tags-plain":
+        rows = "".join(
+            '<div class="tag-row">' + "".join(f'<span class="tag-chip">{t}</span>' for t in row) + "</div>"
+            for row in s["rows"]
+        )
         return f'''<section class="slide s-tags" data-idx="{idx}">
   <h2>{s["title"]}</h2>
-  <div class="tag-groups">{groups_html}</div>
-  {notes_html}
+  <div class="tag-rows">{rows}</div>
 </section>'''
 
     return f'<section class="slide">?? {k}</section>'
@@ -430,6 +361,7 @@ def render_slide(idx: int, s: dict) -> str:
 
 slides_html = "\n".join(render_slide(i, s) for i, s in enumerate(SLIDES))
 total = len(SLIDES)
+
 
 HTML = f'''<!DOCTYPE html>
 <html lang="zh-TW">
@@ -454,19 +386,14 @@ HTML = f'''<!DOCTYPE html>
     justify-content:center; align-items:center; padding:7vh 6vw 10vh; box-sizing:border-box;
     opacity:0; pointer-events:none; transition:opacity 380ms, transform 380ms; transform:translateX(30px);
     overflow-y:auto; overflow-x:hidden; scrollbar-width:thin; scrollbar-color:rgba(255,255,255,0.2) transparent; }}
+  .slide.active {{ opacity:1; pointer-events:auto; transform:translateX(0); }}
   .slide::-webkit-scrollbar {{ width:8px; }}
   .slide::-webkit-scrollbar-thumb {{ background:rgba(255,255,255,0.2); border-radius:4px; }}
   .slide::-webkit-scrollbar-thumb:hover {{ background:rgba(255,255,255,0.4); }}
-  /* hint indicator when slide overflows */
   .slide .scroll-hint {{ position:absolute; bottom:16px; left:50%; transform:translateX(-50%);
     color:var(--accent); font-size:0.78rem; letter-spacing:0.1em; opacity:0.7;
     pointer-events:none; animation:bob 1.8s ease-in-out infinite; }}
   @keyframes bob {{ 0%,100% {{ transform:translate(-50%, 0); }} 50% {{ transform:translate(-50%, 5px); }} }}
-  .slide.active {{ opacity:1; pointer-events:auto; transform:translateX(0); }}
-  .speaker-notes {{ display:none; }}
-  body.show-notes .speaker-notes {{ display:block; position:fixed; bottom:90px; left:24px; right:24px;
-    background:rgba(0,0,0,0.92); color:#e5e5e5; padding:16px 22px; border-radius:10px;
-    font-size:1rem; line-height:1.6; border-left:4px solid var(--accent); z-index:200; }}
 
   /* brand + theme toggle */
   .brand {{ position:fixed; top:22px; left:26px; z-index:100; display:flex; align-items:center; gap:10px;
@@ -475,8 +402,7 @@ HTML = f'''<!DOCTYPE html>
   .brand span {{ font-size:0.78rem; letter-spacing:0.08em; color:var(--fg-dim); }}
   .theme-toggle {{ position:fixed; top:22px; right:26px; z-index:100; width:40px; height:40px;
     border-radius:50%; border:1px solid rgba(255,255,255,0.2); background:rgba(255,255,255,0.04);
-    color:var(--fg); cursor:pointer; display:flex; align-items:center; justify-content:center;
-    transition:background 200ms; }}
+    color:var(--fg); cursor:pointer; display:flex; align-items:center; justify-content:center; transition:background 200ms; }}
   .theme-toggle:hover {{ background:rgba(255,255,255,0.1); }}
   .theme-toggle svg {{ width:18px; height:18px; stroke:currentColor; fill:none; stroke-width:2; }}
 
@@ -503,32 +429,25 @@ HTML = f'''<!DOCTYPE html>
   .thumb:hover {{ background:#333; }}
   .thumb.active {{ border-color:var(--accent); background:#444; color:#fff; }}
 
-  /* slide typography */
+  /* typography */
   .slide h1 {{ font-size:clamp(2.4rem, 6vw, 5rem); font-weight:900; line-height:1.1;
     margin:0 0 18px; letter-spacing:-0.02em; }}
   .slide h2 {{ font-size:clamp(1.5rem, 2.8vw, 2.4rem); font-weight:800; line-height:1.2;
     margin:0 0 18px; letter-spacing:-0.01em; }}
-  .slide h2 small {{ font-size:0.55em; font-weight:500; color:var(--fg-dim); display:block; margin-top:6px; }}
-  .slide .hl {{ color:var(--accent); }}
-  .slide .subtitle {{ font-size:clamp(1.1rem, 1.6vw, 1.4rem); color:var(--fg-dim);
-    max-width:32ch; line-height:1.55; }}
   .slide .tag {{ margin-top:40px; font-size:0.85rem; letter-spacing:0.1em;
     color:var(--accent); text-transform:uppercase; opacity:0.8; }}
-  .slide .eyebrow {{ font-size:0.8rem; letter-spacing:0.2em; color:var(--accent);
-    text-transform:uppercase; margin-bottom:18px; }}
-  .slide .body {{ font-size:clamp(1.15rem, 1.8vw, 1.6rem); line-height:1.6;
-    max-width:28ch; margin-top:12px; }}
+  .slide .body {{ font-size:clamp(1rem, 1.4vw, 1.2rem); line-height:1.7;
+    max-width:60ch; margin-top:12px; color:var(--fg); }}
   .slide .caption {{ font-size:clamp(0.95rem, 1.3vw, 1.15rem); color:var(--fg-dim);
     margin-top:18px; max-width:60ch; text-align:center; }}
-  .slide .context {{ font-size:clamp(0.95rem, 1.25vw, 1.1rem); color:var(--fg-dim);
-    line-height:1.65; max-width:62ch; margin:0 0 18px; }}
-  .slide .lead {{ font-size:clamp(1.05rem, 1.4vw, 1.3rem); color:var(--fg); line-height:1.55;
-    max-width:40ch; margin:0 0 18px; font-weight:500; }}
+  .slide .context {{ font-size:clamp(0.95rem, 1.2vw, 1.1rem); color:var(--fg-dim);
+    line-height:1.7; max-width:64ch; margin:0 0 18px; }}
+  .slide .lead {{ font-size:clamp(1.05rem, 1.4vw, 1.3rem); color:var(--fg); line-height:1.6;
+    max-width:44ch; margin:0 0 18px; font-weight:500; }}
 
   /* title */
   .s-title {{ background:radial-gradient(ellipse at top, #17253c 0%, #060b14 60%, #000 100%); text-align:center; }}
   .s-title .brand-mark img {{ height:56px; filter:brightness(8); margin-bottom:28px; }}
-  .s-title h1 {{ max-width:16ch; }}
 
   /* divider */
   .s-divider {{ background:var(--divider-bg); color:#fff; justify-content:flex-start; align-items:flex-start; padding:14vh 8vw; }}
@@ -536,10 +455,25 @@ HTML = f'''<!DOCTYPE html>
     color:var(--accent); text-transform:uppercase; }}
   .s-divider .divider-title {{ font-size:clamp(2.5rem, 6vw, 4.4rem); font-weight:900; margin-top:20px; line-height:1.1; }}
 
-  /* text kind */
-  .s-text {{ align-items:flex-start; padding-left:10vw; padding-right:10vw; }}
-  .s-text.big {{ text-align:center; align-items:center; justify-content:center; }}
-  .s-text.big h2 {{ font-size:clamp(2.2rem, 6vw, 4.8rem); line-height:1.15; max-width:18ch; }}
+  /* text hook */
+  .s-text {{ text-align:center; }}
+  .s-text h2 {{ font-size:clamp(2rem, 5vw, 4rem); max-width:18ch; }}
+
+  /* paragraph */
+  .s-paragraph {{ justify-content:center; align-items:flex-start; padding:8vh 12vw; }}
+  .s-paragraph h2 {{ margin-bottom:22px; }}
+  .para {{ font-size:clamp(1.05rem, 1.5vw, 1.4rem); line-height:1.8; max-width:60ch; color:var(--fg); margin:0; }}
+
+  /* long numbered list */
+  .s-longlist {{ justify-content:flex-start; padding-top:6vh; padding-left:8vw; padding-right:8vw; }}
+  .s-longlist h2 {{ align-self:flex-start; color:var(--accent); }}
+  .longlist {{ list-style:none; padding:0; margin:0; width:100%; max-width:95ch; counter-reset:none; }}
+  .longlist li {{ display:grid; grid-template-columns:60px 1fr; gap:16px; align-items:flex-start;
+    padding:14px 0; border-bottom:1px solid rgba(255,255,255,0.08); }}
+  .longlist li:last-child {{ border-bottom:none; }}
+  .longlist .ln {{ color:var(--accent); font-weight:800; font-size:1.4rem; line-height:1.6;
+    font-variant-numeric:tabular-nums; }}
+  .longlist .lt {{ font-size:clamp(0.95rem, 1.2vw, 1.12rem); line-height:1.75; color:var(--fg); }}
 
   /* image */
   .s-image {{ justify-content:flex-start; padding-top:6vh; }}
@@ -548,65 +482,28 @@ HTML = f'''<!DOCTYPE html>
   .s-image figure img {{ max-width:100%; max-height:70vh; object-fit:contain;
     box-shadow:0 20px 60px rgba(0,0,0,0.5); border-radius:6px; }}
 
-  /* video */
-  .s-video {{ justify-content:flex-start; padding-top:6vh; }}
-  .s-video.ctx {{ padding-top:5vh; }}
-  .s-video h2 {{ align-self:flex-start; margin-bottom:14px; }}
-  .s-video .context {{ align-self:flex-start; }}
-  .s-video figure {{ flex:1 1 auto; margin:0; display:flex; align-items:center; justify-content:center; width:100%; min-height:0; }}
-  .s-video video {{ max-width:100%; max-height:66vh; width:auto; height:auto; border-radius:8px;
-    background:#000; box-shadow:0 20px 60px rgba(0,0,0,0.6); }}
-
-  .s-video-hero {{ justify-content:center; align-items:center; padding:5vh 8vw; }}
-  .s-video-hero h2 {{ font-size:clamp(2rem, 4vw, 3.4rem); margin-bottom:28px; text-align:center; }}
-  .s-video-hero figure {{ margin:0; width:100%; display:flex; justify-content:center; }}
-  .s-video-hero video {{ max-width:80vw; max-height:66vh; border-radius:10px;
-    box-shadow:0 20px 60px rgba(0,0,0,0.6); }}
-
-  /* compare */
-  .s-compare {{ justify-content:flex-start; padding-top:6vh; }}
-  .s-compare h2 {{ align-self:flex-start; }}
-  .s-compare.ctx {{ padding-top:5vh; }}
-  .s-compare.ctx .context {{ align-self:flex-start; }}
-  .compare-grid {{ display:grid; grid-template-columns:1fr 1fr; gap:24px; width:100%; flex:1 1 auto; min-height:0; }}
-  .compare-grid figure {{ margin:0; display:flex; flex-direction:column; align-items:center; justify-content:center; }}
-  .compare-grid img {{ max-width:100%; max-height:60vh; object-fit:contain; border-radius:6px;
+  /* image + text */
+  .s-img-text {{ justify-content:flex-start; padding-top:6vh; }}
+  .s-img-text h2 {{ align-self:flex-start; margin-bottom:14px; }}
+  .s-img-text figure {{ margin:0; display:flex; flex-direction:column; align-items:center; width:100%; }}
+  .s-img-text figure img {{ max-width:100%; max-height:48vh; object-fit:contain; border-radius:6px;
     box-shadow:0 16px 40px rgba(0,0,0,0.5); }}
-  .compare-grid figcaption {{ margin-top:14px; color:var(--accent); font-weight:700;
-    letter-spacing:0.1em; font-size:1.05rem; }}
+  .s-img-text figcaption {{ margin-top:12px; color:var(--fg-dim); font-size:0.95rem; }}
+  .s-img-text .body {{ margin-top:20px; max-width:70ch; }}
 
-  /* number grid */
-  .s-numgrid {{ justify-content:flex-start; padding-top:6vh; }}
-  .s-numgrid h2 {{ align-self:flex-start; }}
-  .ncards {{ display:grid; grid-template-columns:1fr 1fr; grid-template-rows:1fr 1fr; gap:18px;
-    width:100%; flex:1 1 auto; min-height:0; }}
-  .ncard {{ background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.1);
-    border-radius:12px; padding:24px 28px; display:flex; flex-direction:column; justify-content:center; }}
-  .ncard-num {{ font-size:clamp(2.2rem, 5.5vw, 4rem); font-weight:900; color:var(--accent);
-    line-height:1; letter-spacing:-0.02em; }}
-  .ncard-label {{ font-size:0.85rem; letter-spacing:0.15em; text-transform:uppercase;
-    color:var(--fg-dim); margin-top:8px; }}
-  .ncard-body {{ font-size:clamp(0.95rem, 1.2vw, 1.1rem); line-height:1.55; margin-top:12px; color:var(--fg); }}
-
-  /* image-with-bullet */
-  .s-img-bullet {{ justify-content:flex-start; padding-top:6vh; }}
-  .s-img-bullet h2 {{ align-self:flex-start; }}
-  .img-bullet {{ display:grid; grid-template-columns:2fr 1fr; gap:28px; width:100%;
-    flex:1 1 auto; min-height:0; align-items:center; }}
-  .img-bullet figure {{ margin:0; display:flex; flex-direction:column; align-items:center; justify-content:center; }}
-  .img-bullet figure img {{ max-width:100%; max-height:58vh; object-fit:contain; border-radius:6px;
+  /* image + context */
+  .s-img-ctx {{ justify-content:flex-start; padding-top:6vh; }}
+  .s-img-ctx h2 {{ align-self:flex-start; }}
+  .s-img-ctx .context {{ align-self:flex-start; }}
+  .s-img-ctx figure {{ margin:0; display:flex; justify-content:center; width:100%; }}
+  .s-img-ctx figure img {{ max-width:100%; max-height:50vh; object-fit:contain; border-radius:6px;
     box-shadow:0 16px 40px rgba(0,0,0,0.5); }}
-  .img-bullet figcaption {{ margin-top:12px; color:var(--fg-dim); text-align:center; }}
-  .img-bullet aside {{ padding-left:18px; border-left:3px solid var(--accent); }}
-  .img-bullet .aside-label {{ font-size:0.85rem; letter-spacing:0.15em; text-transform:uppercase; color:var(--accent); margin-bottom:10px; }}
-  .img-bullet aside p {{ font-size:clamp(1rem, 1.3vw, 1.2rem); line-height:1.65; margin:0; }}
 
-  /* image-with-lead */
+  /* image + lead */
   .s-img-lead {{ justify-content:flex-start; padding-top:6vh; align-items:center; }}
   .s-img-lead h2 {{ align-self:flex-start; }}
   .s-img-lead .lead {{ align-self:flex-start; }}
-  .s-img-lead figure {{ flex:1 1 auto; margin:0; display:flex; align-items:center; justify-content:center;
-    width:100%; min-height:0; }}
+  .s-img-lead figure {{ flex:1 1 auto; margin:0; display:flex; align-items:center; justify-content:center; width:100%; min-height:0; }}
   .s-img-lead figure img {{ max-width:100%; max-height:54vh; object-fit:contain; border-radius:6px;
     box-shadow:0 16px 40px rgba(0,0,0,0.5); }}
 
@@ -618,13 +515,26 @@ HTML = f'''<!DOCTYPE html>
     display:flex; flex-direction:column; align-items:center; justify-content:center; }}
   .s-bigq h2 {{ font-size:clamp(2.4rem, 6vw, 5rem); line-height:1.15; max-width:20ch; text-shadow:0 4px 24px rgba(0,0,0,0.6); }}
 
+  /* video */
+  .s-video {{ justify-content:flex-start; padding-top:6vh; }}
+  .s-video.ctx {{ padding-top:5vh; }}
+  .s-video h2 {{ align-self:flex-start; margin-bottom:14px; }}
+  .s-video .context {{ align-self:flex-start; }}
+  .s-video figure {{ flex:1 1 auto; margin:0; display:flex; align-items:center; justify-content:center; width:100%; min-height:0; }}
+  .s-video video {{ max-width:100%; max-height:66vh; border-radius:8px; background:#000;
+    box-shadow:0 20px 60px rgba(0,0,0,0.6); }}
+
+  .s-video-hero {{ justify-content:center; align-items:center; padding:5vh 8vw; }}
+  .s-video-hero h2 {{ font-size:clamp(2rem, 4vw, 3.4rem); margin-bottom:28px; text-align:center; }}
+  .s-video-hero figure {{ margin:0; width:100%; display:flex; justify-content:center; }}
+  .s-video-hero video {{ max-width:80vw; max-height:66vh; border-radius:10px;
+    box-shadow:0 20px 60px rgba(0,0,0,0.6); }}
+
   /* tags */
   .s-tags {{ justify-content:flex-start; padding-top:8vh; }}
   .s-tags h2 {{ align-self:flex-start; }}
-  .tag-groups {{ display:flex; flex-direction:column; gap:22px; width:100%; max-width:1100px; }}
-  .tag-group {{ display:grid; grid-template-columns:130px 1fr; gap:20px; align-items:baseline; }}
-  .tag-label {{ color:var(--accent); font-size:0.9rem; letter-spacing:0.15em; text-transform:uppercase; font-weight:700; }}
-  .tag-chips {{ display:flex; flex-wrap:wrap; gap:10px; }}
+  .tag-rows {{ display:flex; flex-direction:column; gap:14px; width:100%; max-width:1100px; }}
+  .tag-row {{ display:flex; flex-wrap:wrap; gap:10px; }}
   .tag-chip {{ background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.12);
     padding:8px 16px; border-radius:999px; font-size:clamp(0.9rem, 1.3vw, 1.1rem); font-weight:500; }}
 
@@ -637,7 +547,7 @@ HTML = f'''<!DOCTYPE html>
   body.light .brand span {{ color:#555; }}
   body.light .s-divider {{ background:linear-gradient(135deg, #1B5FAA 0%, #0b2543 100%); color:#fff; }}
   body.light .tag-chip {{ background:rgba(0,0,0,0.04); border-color:rgba(0,0,0,0.12); }}
-  body.light .ncard {{ background:#fff; border-color:rgba(0,0,0,0.08); box-shadow:0 4px 16px rgba(0,0,0,0.04); }}
+  body.light .longlist li {{ border-bottom-color:rgba(0,0,0,0.08); }}
   body.light .thumbs {{ background:rgba(255,255,255,0.95); }}
   body.light .thumb {{ background:#eee; color:#333; }}
   body.light .thumb.active {{ background:#fff; }}
@@ -645,10 +555,9 @@ HTML = f'''<!DOCTYPE html>
   /* mobile */
   @media (max-width: 768px) {{
     .slide {{ padding:12vh 6vw 14vh; }}
-    .compare-grid, .ncards, .img-bullet {{ grid-template-columns:1fr; grid-template-rows:auto; }}
-    .tag-group {{ grid-template-columns:1fr; gap:6px; }}
     .brand span {{ display:none; }}
     .ctrl {{ width:22vw; }}
+    .longlist li {{ grid-template-columns:40px 1fr; }}
   }}
 </style>
 </head>
@@ -688,7 +597,6 @@ HTML = f'''<!DOCTYPE html>
   slides.forEach((sl, i) => {{
     const t = document.createElement('div');
     t.className = 'thumb';
-    t.dataset.idx = i;
     const h = sl.querySelector('h1, h2, .divider-title');
     const label = h ? h.textContent.replace(/\\n/g, ' ').slice(0, 14) : '#' + (i+1);
     t.textContent = (i+1) + ' · ' + label;
@@ -698,7 +606,6 @@ HTML = f'''<!DOCTYPE html>
   const thumbEls = thumbs.querySelectorAll('.thumb');
 
   function addScrollHint(sl) {{
-    // Only show if content overflows AND we haven't added one yet
     let existing = sl.querySelector('.scroll-hint');
     const overflows = sl.scrollHeight > sl.clientHeight + 4;
     if (overflows && !existing) {{
@@ -721,7 +628,6 @@ HTML = f'''<!DOCTYPE html>
       if (v && i !== cur) v.pause();
       if (i === cur) {{
         sl.scrollTop = 0;
-        // defer so layout settles (images may change size after load)
         requestAnimationFrame(() => addScrollHint(sl));
       }}
     }});
@@ -732,11 +638,11 @@ HTML = f'''<!DOCTYPE html>
     if (active) active.scrollIntoView({{ block:'nearest', inline:'center', behavior:'smooth' }});
   }}
 
-  // re-check overflow after images load or window resizes
   window.addEventListener('resize', () => {{ const s = slides[cur]; if (s) addScrollHint(s); }});
   document.querySelectorAll('.slide img').forEach(img => {{
     img.addEventListener('load', () => {{ const s = slides[cur]; if (s) addScrollHint(s); }});
   }});
+
   function go(i) {{ cur = Math.max(0, Math.min(total - 1, i)); render(); }}
   const next = () => go(cur + 1);
   const prev = () => go(cur - 1);
@@ -753,7 +659,6 @@ HTML = f'''<!DOCTYPE html>
       if (document.fullscreenElement) document.exitFullscreen();
       else document.documentElement.requestFullscreen();
     }}
-    else if (e.key.toLowerCase() === 'p') document.body.classList.toggle('show-notes');
   }});
 
   let tx = null;
