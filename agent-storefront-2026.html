@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>2026 Agent 經濟：你的網站正在變成 storefront</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --cna-blue: #1B5FAA;
+  --cna-deep: #164B8A;
+  --cna-light: #E8F0FE;
+  --cna-red: #C41E3A;
+  --bg: #FAFAFB;
+  --bg-card: #FFFFFF;
+  --text: #0D1B2A;
+  --text-muted: #5A6B7B;
+  --border: #E0E6ED;
+  --accent: var(--cna-blue);
+  --accent-soft: #E8F0FE;
+}
+[data-theme="dark"] {
+  --bg: #0D1B2A;
+  --bg-card: #142638;
+  --text: #F0F4F8;
+  --text-muted: #9AA8B8;
+  --border: #243447;
+  --accent: #5B9BE0;
+  --accent-soft: #1B3552;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body {
+  height: 100%;
+  font-family: "Noto Sans TC", "Source Han Sans TC", "Microsoft JhengHei", "PingFang TC", sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  overflow: hidden;
+  transition: background-color 300ms ease, color 300ms ease;
+  -webkit-font-smoothing: antialiased;
+}
+.code { font-family: "JetBrains Mono", "Fira Code", monospace; font-size: 0.85em; background: var(--accent-soft); color: var(--accent); padding: 2px 8px; border-radius: 4px; }
+.progress-bar { position: fixed; top: 0; left: 0; height: 3px; background: var(--accent); z-index: 100; transition: width 400ms ease; }
+.icon-fixed {
+  position: fixed; top: 24px; left: 24px; z-index: 90;
+  height: 44px; padding: 6px 12px; border-radius: 8px;
+  background: rgba(255,255,255,0.7); backdrop-filter: blur(8px);
+  display: flex; align-items: center;
+  transition: background-color 300ms ease;
+}
+[data-theme="dark"] .icon-fixed { background: rgba(20,38,56,0.7); }
+.icon-fixed svg { height: 32px; width: auto; }
+[data-theme="dark"] .icon-fixed svg text { fill: #5B9BE0 !important; }
+.theme-toggle {
+  position: fixed; top: 24px; right: 24px; z-index: 90;
+  width: 44px; height: 44px; border-radius: 50%; border: 1px solid var(--border);
+  background: var(--bg-card); color: var(--text); cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  transition: all 300ms ease;
+}
+.theme-toggle:hover { background: var(--accent-soft); border-color: var(--accent); }
+.theme-toggle svg { width: 20px; height: 20px; }
+.slides-container { position: relative; width: 100vw; height: 100vh; }
+.slide {
+  position: absolute; inset: 0;
+  display: flex; flex-direction: column;
+  padding: 100px 80px 80px;
+  opacity: 0; pointer-events: none;
+  transform: translateX(30px);
+  transition: opacity 400ms ease-out, transform 400ms ease-out;
+}
+.slide.active { opacity: 1; pointer-events: auto; transform: translateX(0); }
+.slide-inner {
+  width: 100%; max-width: 1100px; margin: 0 auto;
+  flex: 1; display: flex; flex-direction: column;
+}
+.slide h1 { font-size: clamp(2.2rem, 5vw, 4rem); font-weight: 900; line-height: 1.15; letter-spacing: -0.02em; }
+.slide h2 { font-size: clamp(1.5rem, 2.6vw, 2.2rem); font-weight: 700; line-height: 1.2; letter-spacing: -0.01em; margin-bottom: 32px; color: var(--text); }
+.slide h2 .accent { color: var(--accent); }
+.slide h2::after { content: ""; display: block; width: 48px; height: 4px; background: var(--accent); margin-top: 12px; border-radius: 2px; }
+.slide p, .slide li { font-size: clamp(1rem, 1.5vw, 1.2rem); line-height: 1.7; color: var(--text); }
+.slide .muted { color: var(--text-muted); }
+.body-zone { flex: 1; display: flex; flex-direction: column; justify-content: center; }
+.eyebrow { font-size: 0.85rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.15em; color: var(--accent); margin-bottom: 16px; }
+
+/* Slide 1 - Title */
+.slide-title { padding: 80px; align-items: center; justify-content: center; text-align: center; }
+.slide-title .slide-inner { align-items: center; justify-content: center; text-align: center; }
+.slide-title .hero-eyebrow { font-size: 1rem; font-weight: 500; color: var(--accent); letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 24px; }
+.slide-title h1 { font-size: clamp(2.5rem, 6vw, 5rem); margin-bottom: 24px; background: linear-gradient(135deg, var(--cna-blue), var(--cna-deep)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+[data-theme="dark"] .slide-title h1 { background: linear-gradient(135deg, #5B9BE0, #A5C8F0); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; }
+.slide-title .subtitle { font-size: clamp(1.1rem, 2vw, 1.5rem); color: var(--text-muted); margin-bottom: 48px; max-width: 800px; }
+.slide-title .source { font-size: 0.9rem; color: var(--text-muted); border-top: 1px solid var(--border); padding-top: 24px; }
+
+/* Slide 2 - Thesis */
+.thesis-quote { font-size: clamp(1.3rem, 2.4vw, 2rem); font-weight: 500; line-height: 1.5; color: var(--text); padding: 24px 32px; border-left: 4px solid var(--accent); background: var(--accent-soft); border-radius: 0 12px 12px 0; }
+.thesis-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; margin-top: 32px; }
+.thesis-card { padding: 24px; border-radius: 12px; border: 1px solid var(--border); background: var(--bg-card); }
+.thesis-card .label { font-size: 0.85rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 8px; }
+.thesis-card.left .label { color: var(--text-muted); }
+.thesis-card.right .label { color: var(--accent); }
+
+/* Slide 3 - Three layers */
+.layers { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; margin-top: 16px; }
+.layer-card { padding: 28px 24px; border-radius: 16px; background: var(--bg-card); border: 1px solid var(--border); position: relative; transition: transform 300ms ease, border-color 300ms ease; }
+.layer-card:hover { transform: translateY(-4px); border-color: var(--accent); }
+.layer-card .num { font-size: 3rem; font-weight: 900; color: var(--accent); opacity: 0.2; line-height: 1; }
+.layer-card h3 { font-size: 1.3rem; font-weight: 700; margin: 8px 0 4px; }
+.layer-card .en { font-size: 0.85rem; color: var(--text-muted); margin-bottom: 16px; font-family: "JetBrains Mono", monospace; }
+.layer-card p { font-size: 0.95rem; color: var(--text-muted); }
+.layer-card .icon-wrap { width: 48px; height: 48px; border-radius: 12px; background: var(--accent-soft); color: var(--accent); display: flex; align-items: center; justify-content: center; margin-bottom: 16px; }
+
+/* Slide 4 - UCP players */
+.players-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-top: 24px; }
+.player-pill { padding: 16px 12px; text-align: center; border-radius: 10px; background: var(--bg-card); border: 1px solid var(--border); font-weight: 700; font-size: 1rem; }
+.player-pill.new { background: var(--accent); color: white; border-color: var(--accent); }
+.players-note { margin-top: 24px; font-size: 0.95rem; color: var(--text-muted); padding: 16px 20px; background: var(--accent-soft); border-radius: 10px; border-left: 3px solid var(--accent); }
+
+/* Slide 5 - UCP flow */
+.flow { display: flex; align-items: stretch; gap: 12px; margin-top: 24px; flex-wrap: wrap; }
+.flow-step { flex: 1; min-width: 130px; padding: 20px 16px; background: var(--bg-card); border: 1px solid var(--border); border-radius: 10px; text-align: center; position: relative; }
+.flow-step .step-num { font-size: 0.8rem; font-weight: 700; color: var(--accent); }
+.flow-step .step-name { font-size: 1rem; font-weight: 600; margin-top: 4px; }
+.endpoint-box { margin-top: 24px; padding: 20px 24px; background: #0D1B2A; color: #F0F4F8; border-radius: 10px; font-family: "JetBrains Mono", monospace; font-size: 1.1rem; }
+.endpoint-box .lbl { color: #5B9BE0; font-size: 0.85rem; margin-bottom: 6px; display: block; font-family: "Noto Sans TC", sans-serif; }
+
+/* Slide 6 - Discovery */
+.compare { display: grid; grid-template-columns: 1fr auto 1fr; gap: 24px; align-items: center; margin-top: 16px; }
+.compare-card { padding: 28px 24px; border-radius: 14px; }
+.compare-card.before { background: var(--bg-card); border: 1px solid var(--border); color: var(--text-muted); }
+.compare-card.after { background: var(--accent); color: white; }
+.compare-card h4 { font-size: 1.4rem; font-weight: 700; margin-bottom: 12px; }
+.compare-card p { font-size: 1rem; line-height: 1.6; color: inherit; }
+.compare-arrow { color: var(--accent); }
+.benefits-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-top: 24px; }
+.benefit-chip { padding: 12px; text-align: center; font-size: 0.9rem; font-weight: 600; background: var(--accent-soft); color: var(--accent); border-radius: 8px; }
+
+/* Slide 7 - Skills */
+.skills-layout { display: grid; grid-template-columns: 1.2fr 1fr; gap: 32px; margin-top: 16px; align-items: start; }
+.skill-example { padding: 24px; background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px; }
+.skill-example .tag { display: inline-block; font-size: 0.75rem; font-weight: 700; padding: 4px 10px; background: var(--cna-red); color: white; border-radius: 4px; margin-bottom: 12px; letter-spacing: 0.1em; }
+.skill-example .pattern { font-size: 1.05rem; font-weight: 500; line-height: 1.6; padding: 16px; background: var(--accent-soft); border-radius: 8px; color: var(--text); }
+.skill-points { display: flex; flex-direction: column; gap: 14px; }
+.skill-point { display: flex; gap: 14px; align-items: flex-start; }
+.skill-point .dot { width: 28px; height: 28px; flex-shrink: 0; border-radius: 50%; background: var(--accent); color: white; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.85rem; }
+.skill-point .txt { flex: 1; font-size: 0.98rem; line-height: 1.5; }
+.skill-point .txt b { color: var(--text); }
+
+/* Slide 8 - Compare */
+.vs-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-top: 16px; }
+.vs-col { padding: 28px; border-radius: 14px; }
+.vs-col.open { background: var(--accent-soft); border: 2px solid var(--accent); }
+.vs-col.closed { background: var(--bg-card); border: 1px solid var(--border); }
+.vs-col h4 { font-size: 1.3rem; font-weight: 700; margin-bottom: 8px; }
+.vs-col .who { font-size: 0.9rem; color: var(--text-muted); margin-bottom: 20px; font-family: "JetBrains Mono", monospace; }
+.vs-col ul { list-style: none; padding: 0; }
+.vs-col li { padding: 10px 0; padding-left: 28px; position: relative; font-size: 0.98rem; line-height: 1.5; border-bottom: 1px solid var(--border); }
+.vs-col li:last-child { border-bottom: none; }
+.vs-col.open li::before { content: "✓"; position: absolute; left: 4px; color: var(--accent); font-weight: 700; }
+.vs-col.closed li::before { content: "✕"; position: absolute; left: 4px; color: var(--text-muted); font-weight: 700; }
+
+/* Slide 9 - Implications */
+.impl-list { display: flex; flex-direction: column; gap: 18px; margin-top: 16px; }
+.impl-item { display: flex; gap: 20px; padding: 22px; background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px; border-left: 4px solid var(--accent); }
+.impl-item .num { font-size: 2rem; font-weight: 900; color: var(--accent); flex-shrink: 0; line-height: 1; }
+.impl-item .body { flex: 1; }
+.impl-item h4 { font-size: 1.1rem; font-weight: 700; margin-bottom: 6px; }
+.impl-item p { font-size: 0.95rem; color: var(--text-muted); line-height: 1.6; }
+
+/* Slide 10 - Closing */
+.closing { text-align: center; align-items: center; justify-content: center; }
+.closing .slide-inner { text-align: center; align-items: center; justify-content: center; }
+.closing .takeaway { font-size: clamp(1.8rem, 4vw, 3rem); font-weight: 900; line-height: 1.3; color: var(--text); margin-bottom: 20px; max-width: 900px; }
+.closing .takeaway .accent { color: var(--accent); }
+.closing .signoff { font-size: 1.1rem; color: var(--text-muted); margin-bottom: 40px; }
+.closing .source-card { padding: 20px 28px; background: var(--bg-card); border: 1px solid var(--border); border-radius: 10px; max-width: 600px; }
+.closing .source-card .label { font-size: 0.8rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 6px; }
+.closing .source-card .title { font-size: 1.05rem; font-weight: 600; }
+.closing .source-card .author { font-size: 0.9rem; color: var(--text-muted); margin-top: 4px; }
+
+/* Footer nav */
+.footer-nav { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%); display: flex; align-items: center; gap: 24px; z-index: 90; padding: 8px 20px; background: var(--bg-card); border: 1px solid var(--border); border-radius: 100px; backdrop-filter: blur(8px); }
+.nav-btn { background: none; border: none; color: var(--text-muted); cursor: pointer; padding: 6px 12px; font-size: 0.95rem; font-weight: 500; border-radius: 100px; transition: all 200ms ease; display: flex; align-items: center; gap: 6px; font-family: inherit; }
+.nav-btn:hover:not(:disabled) { background: var(--accent-soft); color: var(--accent); }
+.nav-btn:disabled { opacity: 0.3; cursor: not-allowed; }
+.page-indicator { font-size: 0.95rem; color: var(--text); font-weight: 600; min-width: 60px; text-align: center; font-variant-numeric: tabular-nums; }
+
+/* Thumbnail nav */
+.thumb-zone { position: fixed; bottom: 0; left: 0; right: 0; height: 100px; z-index: 80; pointer-events: none; }
+.thumb-zone:hover .thumb-strip { opacity: 1; transform: translateY(0); pointer-events: auto; }
+.thumb-strip { position: absolute; bottom: 80px; left: 50%; transform: translate(-50%, 20px); display: flex; gap: 8px; padding: 12px; background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px; opacity: 0; transition: all 300ms ease; max-width: 90vw; overflow-x: auto; backdrop-filter: blur(10px); }
+.thumb { width: 100px; height: 56px; flex-shrink: 0; background: var(--accent-soft); border: 2px solid transparent; border-radius: 6px; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 0.75rem; font-weight: 700; color: var(--accent); transition: all 200ms ease; padding: 4px; text-align: center; line-height: 1.2; }
+.thumb:hover { border-color: var(--accent); }
+.thumb.active { background: var(--accent); color: white; border-color: var(--accent); }
+
+/* Mobile */
+@media (max-width: 768px) {
+  .slide { padding: 80px 24px 100px; }
+  .icon-fixed { top: 12px; left: 12px; height: 36px; padding: 4px 8px; }
+  .icon-fixed img { height: 28px; }
+  .theme-toggle { top: 12px; right: 12px; width: 36px; height: 36px; }
+  .thesis-grid, .layers, .players-grid, .skills-layout, .vs-grid, .compare { grid-template-columns: 1fr; }
+  .compare-arrow { transform: rotate(90deg); justify-self: center; }
+  .benefits-row { grid-template-columns: repeat(2, 1fr); }
+  .flow { flex-direction: column; }
+  .footer-nav { gap: 12px; padding: 6px 12px; }
+}
+</style>
+</head>
+<body>
+<div class="progress-bar" id="progressBar"></div>
+<div class="icon-fixed">
+  <svg width="120" height="32" viewBox="0 0 240 64" xmlns="http://www.w3.org/2000/svg"><text x="0" y="42" font-family="Noto Sans TC, sans-serif" font-size="30" font-weight="900" fill="#1B5FAA" letter-spacing="2">中央社</text><text x="125" y="28" font-family="JetBrains Mono, monospace" font-size="11" font-weight="700" fill="#1B5FAA" letter-spacing="2">CNA</text><text x="125" y="45" font-family="JetBrains Mono, monospace" font-size="9" font-weight="500" fill="#5A6B7B" letter-spacing="1">MEDIA LAB</text></svg>
+</div>
+<button class="theme-toggle" id="themeToggle" aria-label="切換深淺色">
+  <svg id="iconSun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
+  <svg id="iconMoon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" style="display:none"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+</button>
+
+<div class="slides-container" id="slidesContainer">
+
+  <!-- Slide 1: Title -->
+  <section class="slide slide-title active" data-thumb="封面">
+    <div class="slide-inner">
+      <div class="hero-eyebrow">媒體實驗室・趨勢解讀</div>
+      <h1>你的網站<br>正在變成 storefront</h1>
+      <p class="subtitle">2026 年 AI agent 將透過開放網路標準與企業互動。三大層面同時開展，新聞媒體網站的角色正在重新定義。</p>
+      <div class="source">基於 Florent Daudens（2026-04-29）原文整理</div>
+    </div>
+  </section>
+
+  <!-- Slide 2: Thesis -->
+  <section class="slide" data-thumb="核心命題">
+    <div class="slide-inner">
+      <h2>核心命題：<span class="accent">標準</span>取代平台</h2>
+      <div class="body-zone">
+        <div class="thesis-quote">2026 年的 agent 不是透過某個 app 找到你的網站，而是透過開放網路標準直接與你的服務互動。</div>
+        <div class="thesis-grid">
+          <div class="thesis-card left">
+            <div class="label">過去</div>
+            <p>企業仰賴平台 app 與整合，受平台政策、審核、抽成牽制。</p>
+          </div>
+          <div class="thesis-card right">
+            <div class="label">2026</div>
+            <p>企業實作開放協定，agent 直接讀取結構化資料、發起交易。</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Slide 3: Three Layers -->
+  <section class="slide" data-thumb="三層架構">
+    <div class="slide-inner">
+      <h2>三個同時開展的層面</h2>
+      <div class="body-zone">
+        <div class="layers">
+          <div class="layer-card">
+            <div class="icon-wrap"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg></div>
+            <div class="num">01</div>
+            <h3>商務層</h3>
+            <div class="en">Commerce / UCP</div>
+            <p>Agent 驅動的購物協定，從瀏覽到退貨一條龍。</p>
+          </div>
+          <div class="layer-card">
+            <div class="icon-wrap"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg></div>
+            <div class="num">02</div>
+            <h3>探索層</h3>
+            <div class="en">Discovery / MCP Cards</div>
+            <p>Agent 從爬 HTML 改為查詢結構化資料。</p>
+          </div>
+          <div class="layer-card">
+            <div class="icon-wrap"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5M2 12l10 5 10-5"/></svg></div>
+            <div class="num">03</div>
+            <h3>能力層</h3>
+            <div class="en">Capability / Skills</div>
+            <p>編輯判斷可被編碼，隨工具自動更新到所有客戶端。</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Slide 4: UCP players -->
+  <section class="slide" data-thumb="商務層 玩家">
+    <div class="slide-inner">
+      <h2>商務層：<span class="accent">UCP Tech Council</span> 玩家陣容</h2>
+      <div class="body-zone">
+        <div class="eyebrow">新加入</div>
+        <div class="players-grid">
+          <div class="player-pill new">Amazon</div>
+          <div class="player-pill new">Meta</div>
+          <div class="player-pill new">Microsoft</div>
+          <div class="player-pill new">Salesforce</div>
+        </div>
+        <div class="players-grid" style="margin-top:12px;">
+          <div class="player-pill new">Stripe</div>
+          <div class="player-pill">Google</div>
+          <div class="player-pill">Shopify</div>
+          <div class="player-pill">Etsy</div>
+        </div>
+        <div class="players-grid" style="margin-top:12px;">
+          <div class="player-pill">Target</div>
+          <div class="player-pill" style="grid-column: span 3;">+ 20 家支付夥伴</div>
+        </div>
+        <div class="players-note">「商務運作的每個功能層，都集合在單一 Tech Council。」</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Slide 5: UCP flow -->
+  <section class="slide" data-thumb="UCP 流程">
+    <div class="slide-inner">
+      <h2>UCP 怎麼運作</h2>
+      <div class="body-zone">
+        <p class="muted" style="margin-bottom: 8px;">透過一個探索端點，agent 即可完成完整購物流程：</p>
+        <div class="endpoint-box">
+          <span class="lbl">Discovery Endpoint</span>
+          /.well-known/ucp
+        </div>
+        <div class="flow">
+          <div class="flow-step"><div class="step-num">01</div><div class="step-name">瀏覽</div></div>
+          <div class="flow-step"><div class="step-num">02</div><div class="step-name">加入購物車</div></div>
+          <div class="flow-step"><div class="step-num">03</div><div class="step-name">結帳</div></div>
+          <div class="flow-step"><div class="step-num">04</div><div class="step-name">訂單追蹤</div></div>
+          <div class="flow-step"><div class="step-num">05</div><div class="step-name">退貨</div></div>
+        </div>
+        <p class="muted" style="margin-top: 24px; font-size: 0.95rem;">目前聚焦實體零售與離散 SKU。<b style="color: var(--text);">知識產品與訂閱仍是空白</b>，正是新聞媒體可以推進的方向。</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Slide 6: Discovery -->
+  <section class="slide" data-thumb="探索層">
+    <div class="slide-inner">
+      <h2>探索層：從<span class="accent">被爬取</span>到<span class="accent">提供服務</span></h2>
+      <div class="body-zone">
+        <p class="muted" style="margin-bottom: 16px;">SEP-2127 透過 <span class="code">.well-known/mcp/server-card.json</span> 標準化伺服器探索。</p>
+        <div class="compare">
+          <div class="compare-card before">
+            <h4>過去</h4>
+            <p>Agent 爬 HTML、解析 DOM、猜測語意。網站是被動的內容池。</p>
+          </div>
+          <div class="compare-arrow">
+            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+          </div>
+          <div class="compare-card after">
+            <h4>2026</h4>
+            <p>Agent 查詢結構化 server card。網站主動「提供服務」。</p>
+          </div>
+        </div>
+        <div class="benefits-row">
+          <div class="benefit-chip">歸因機制</div>
+          <div class="benefit-chip">流量控管</div>
+          <div class="benefit-chip">定價揭露</div>
+          <div class="benefit-chip">編輯框架</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Slide 7: Skills -->
+  <section class="slide" data-thumb="能力層">
+    <div class="slide-inner">
+      <h2>能力層：把<span class="accent">編輯判斷</span>編碼進工具</h2>
+      <div class="body-zone">
+        <div class="skills-layout">
+          <div>
+            <div class="skill-points">
+              <div class="skill-point">
+                <div class="dot">1</div>
+                <div class="txt"><b>4/16 升格 Working Group。</b>從 Interest Group 進入正式標準階段。</div>
+              </div>
+              <div class="skill-point">
+                <div class="dot">2</div>
+                <div class="txt"><b>規範使用模式可隨工具發布。</b>MCP 伺服器不只給工具，還給「怎麼用」。</div>
+              </div>
+              <div class="skill-point">
+                <div class="dot">3</div>
+                <div class="txt"><b>所有客戶端自動更新。</b>編輯判斷一處更動，到處生效。</div>
+              </div>
+            </div>
+          </div>
+          <div class="skill-example">
+            <div class="tag">範例 PATTERN</div>
+            <div class="pattern">「先給<b>解釋性報導</b>，再給<b>最新報導</b>。」</div>
+            <p class="muted" style="font-size: 0.9rem; margin-top: 12px;">這條編輯邏輯可以被寫進 Skill，跟著 MCP 伺服器一起送出。</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Slide 8: Open vs Closed -->
+  <section class="slide" data-thumb="標準對比">
+    <div class="slide-inner">
+      <h2>路線之爭：<span class="accent">開放標準 vs 平台主導</span></h2>
+      <div class="body-zone">
+        <div class="vs-grid">
+          <div class="vs-col open">
+            <h4>UCP / MCP / Skills</h4>
+            <div class="who">開放網路標準</div>
+            <ul>
+              <li>企業獨立參與</li>
+              <li>無需 app 或審核</li>
+              <li>多廠商共治</li>
+              <li>標準制定就是槓桿</li>
+            </ul>
+          </div>
+          <div class="vs-col closed">
+            <h4>OpenAI ACP</h4>
+            <div class="who">Agentic Commerce Protocol</div>
+            <ul>
+              <li>單一平台主導</li>
+              <li>需經平台審核</li>
+              <li>政策可能單方面變更</li>
+              <li>抽成與排序由平台決定</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Slide 9: Implications -->
+  <section class="slide" data-thumb="對媒體啟示">
+    <div class="slide-inner">
+      <h2>對新聞媒體的<span class="accent">三個啟示</span></h2>
+      <div class="body-zone">
+        <div class="impl-list">
+          <div class="impl-item">
+            <div class="num">01</div>
+            <div class="body">
+              <h4>實作開放網路標準，不要單押平台整合</h4>
+              <p>把 server-card、UCP endpoint 視為跟 RSS、sitemap 同等級的基礎設施。</p>
+            </div>
+          </div>
+          <div class="impl-item">
+            <div class="num">02</div>
+            <div class="body">
+              <h4>推動標準涵蓋知識產品與訂閱</h4>
+              <p>UCP 目前只覆蓋實體 SKU。新聞、付費內容、訂閱模式還沒納入，現在進場仍能影響規格。</p>
+            </div>
+          </div>
+          <div class="impl-item">
+            <div class="num">03</div>
+            <div class="body">
+              <h4>用 Skills 編碼編輯判斷，建立差異化</h4>
+              <p>「給解釋性報導再給即時新聞」這類編輯邏輯，是 agent 環境下的競爭優勢。</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Slide 10: Closing -->
+  <section class="slide closing" data-thumb="結語">
+    <div class="slide-inner">
+      <div class="hero-eyebrow">結語</div>
+      <p class="takeaway">標準制定的過程，<br>就是<span class="accent">這場變局的槓桿</span>。</p>
+      <p class="signoff">與其等待 agent 改變我們，不如現在就決定我們要被怎樣讀取。</p>
+      <div class="source-card">
+        <div class="label">原文</div>
+        <div class="title">How agents will reach your business in 2026</div>
+        <div class="author">Florent Daudens・fdaudens.substack.com・2026-04-29</div>
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<div class="footer-nav">
+  <button class="nav-btn" id="prevBtn" aria-label="上一頁">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M19 12H5M11 18l-6-6 6-6"/></svg>
+    上一頁
+  </button>
+  <div class="page-indicator" id="pageIndicator">1 / 10</div>
+  <button class="nav-btn" id="nextBtn" aria-label="下一頁">
+    下一頁
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+  </button>
+</div>
+
+<div class="thumb-zone">
+  <div class="thumb-strip" id="thumbStrip"></div>
+</div>
+
+<script>
+const slides = document.querySelectorAll('.slide');
+const total = slides.length;
+let current = 0;
+const prevBtn = document.getElementById('prevBtn');
+const nextBtn = document.getElementById('nextBtn');
+const pageIndicator = document.getElementById('pageIndicator');
+const progressBar = document.getElementById('progressBar');
+const thumbStrip = document.getElementById('thumbStrip');
+
+slides.forEach((s, i) => {
+  const t = document.createElement('div');
+  t.className = 'thumb';
+  t.textContent = (i+1) + '. ' + (s.dataset.thumb || '');
+  t.addEventListener('click', () => goTo(i));
+  thumbStrip.appendChild(t);
+});
+
+function render() {
+  slides.forEach((s, i) => s.classList.toggle('active', i === current));
+  pageIndicator.textContent = (current+1) + ' / ' + total;
+  progressBar.style.width = ((current+1)/total*100) + '%';
+  prevBtn.disabled = current === 0;
+  nextBtn.disabled = current === total-1;
+  document.querySelectorAll('.thumb').forEach((t, i) => t.classList.toggle('active', i === current));
+}
+function goTo(i) { current = Math.max(0, Math.min(total-1, i)); render(); }
+function next() { if (current < total-1) goTo(current+1); }
+function prev() { if (current > 0) goTo(current-1); }
+
+prevBtn.addEventListener('click', prev);
+nextBtn.addEventListener('click', next);
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'ArrowRight' || e.key === 'ArrowDown' || e.key === ' ') { e.preventDefault(); next(); }
+  else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') { e.preventDefault(); prev(); }
+  else if (e.key === 'f' || e.key === 'F') {
+    if (!document.fullscreenElement) document.documentElement.requestFullscreen();
+    else document.exitFullscreen();
+  }
+  else if (e.key === 'Home') goTo(0);
+  else if (e.key === 'End') goTo(total-1);
+});
+
+let touchStart = null;
+document.addEventListener('touchstart', e => { touchStart = e.touches[0].clientX; });
+document.addEventListener('touchend', e => {
+  if (touchStart === null) return;
+  const dx = e.changedTouches[0].clientX - touchStart;
+  if (Math.abs(dx) > 50) { dx < 0 ? next() : prev(); }
+  touchStart = null;
+});
+
+document.addEventListener('click', e => {
+  if (e.target.closest('button, .thumb, .nav-btn, .footer-nav, .theme-toggle, .thumb-zone, .thumb-strip')) return;
+  const x = e.clientX;
+  const w = window.innerWidth;
+  if (x < w * 0.15) prev();
+  else if (x > w * 0.85) next();
+});
+
+const themeToggle = document.getElementById('themeToggle');
+const iconSun = document.getElementById('iconSun');
+const iconMoon = document.getElementById('iconMoon');
+function setTheme(t) {
+  document.documentElement.setAttribute('data-theme', t);
+  iconSun.style.display = t === 'dark' ? 'none' : 'block';
+  iconMoon.style.display = t === 'dark' ? 'block' : 'none';
+  localStorage.setItem('cna-theme', t);
+}
+themeToggle.addEventListener('click', () => {
+  const cur = document.documentElement.getAttribute('data-theme') || 'light';
+  setTheme(cur === 'light' ? 'dark' : 'light');
+});
+const saved = localStorage.getItem('cna-theme');
+if (saved) setTheme(saved);
+else if (window.matchMedia('(prefers-color-scheme: dark)').matches) setTheme('dark');
+
+render();
+</script>
+</body>
+</html>
