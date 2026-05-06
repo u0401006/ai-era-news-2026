@@ -1,0 +1,127 @@
+/* =========================================================================
+   styles-v1-conservative.css
+   保守版 — 圖放大但保持目前風格
+   - 圖片放大到 78vh，內容區域可吃寬一點 (max-width 1280px)
+   - 眉標 (h2) 維持原本左上的位置與大小
+   - 其他元素水平置中、文字段落齊左
+   - 在 styles.css 之後引入，靠級聯（cascade）覆寫
+   ========================================================================= */
+
+/* --- 1. 內容容器：拉寬一點，讓圖有空間長大 --- */
+.slide,
+section.slide,
+.slide-container {
+  /* 水平置中整個內容堆疊 */
+  align-items: center !important;
+}
+
+.slide-content,
+.slide > .content,
+.slide-body {
+  max-width: min(1280px, 92vw) !important;  /* 比預設的 1100 寬一些 */
+  width: 100%;
+  margin-inline: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;        /* 元素水平置中 */
+  justify-content: center;
+  gap: clamp(0.75rem, 1.5vh, 1.25rem);   /* 元素間距收緊，把空間讓給圖 */
+}
+
+/* --- 2. 眉標：維持左上角的「眉標」位置，不被置中影響 --- */
+.slide > h2,
+.slide-title,
+section.slide > h2 {
+  align-self: flex-start !important;     /* 不跟著置中 */
+  text-align: left !important;
+  margin-bottom: clamp(0.5rem, 1.5vh, 1rem) !important;
+}
+
+/* --- 3. 圖片：核心放大 --- */
+.slide img,
+.slide picture img,
+.slide figure img {
+  /* 大幅放大：依高度為主，寬度自適應 */
+  max-height: 78vh !important;
+  max-width: min(96%, 1400px) !important;
+  width: auto !important;
+  height: auto !important;
+  object-fit: contain;
+  display: block;
+  margin-inline: auto;
+  /* 提升清晰度 */
+  image-rendering: -webkit-optimize-contrast;
+}
+
+/* 影片同樣放大 */
+.slide video {
+  max-height: 78vh !important;
+  max-width: min(96%, 1400px) !important;
+  width: auto !important;
+  height: auto !important;
+  display: block;
+  margin-inline: auto;
+}
+
+/* --- 4. Caption / 圖說：小一點、置中、與圖貼近 --- */
+.slide figure figcaption,
+.slide .caption,
+.slide img + p em,
+.slide img + p,
+.slide video + p em,
+.slide video + p {
+  text-align: center !important;
+  font-size: clamp(0.95rem, 1.4vw, 1.15rem) !important;
+  opacity: 0.75;
+  margin-top: clamp(0.4rem, 1vh, 0.75rem) !important;
+}
+
+/* --- 5. 文字段落：齊左 --- */
+.slide p,
+.slide ul,
+.slide ol,
+.slide li {
+  text-align: left !important;
+}
+
+/* 但是只有圖說 (緊貼圖片的那行說明) 維持置中：上面的規則已涵蓋 */
+
+/* 純文字 slide 的 paragraph 仍然齊左，但容器置中 */
+.slide-content > p,
+.slide-content > ul,
+.slide-content > ol {
+  align-self: stretch;
+  max-width: 1100px;
+  margin-inline: auto;
+}
+
+/* --- 6. 標題 slide / Section divider 例外：完全置中 --- */
+.title-slide h1,
+.title-slide h2,
+.title-slide p,
+.section-divider h1,
+.section-divider h2,
+.section-divider p {
+  text-align: center !important;
+}
+
+.title-slide,
+.section-divider {
+  justify-content: center !important;
+  align-items: center !important;
+}
+
+/* --- 7. Mobile 防呆：375px 仍要可讀 --- */
+@media (max-width: 768px) {
+  .slide img,
+  .slide video {
+    max-height: 60vh !important;
+    max-width: 100% !important;
+  }
+  .slide-content,
+  .slide > .content,
+  .slide-body {
+    max-width: 100% !important;
+    padding-inline: 1rem;
+  }
+}
